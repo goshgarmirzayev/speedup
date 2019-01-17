@@ -3,11 +3,11 @@ package com.bsptechs.main.dao.inter;
 import com.bsptechs.main.bean.Charset;
 import com.bsptechs.main.bean.Collation;
 import com.bsptechs.main.bean.SUArrayList;
-import com.bsptechs.main.bean.SUQueryBean;
-import com.bsptechs.main.bean.SUQueryResult;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUConnectionBean;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUDatabaseBean;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUTableBean;
+import com.bsptechs.main.bean.server.SUQueryBean;
+import com.bsptechs.main.bean.server.SUQueryResult;
+import com.bsptechs.main.bean.server.SUConnectionBean;
+import com.bsptechs.main.bean.server.SUDatabaseBean;
+import com.bsptechs.main.bean.server.SUTableBean;
 import com.bsptechs.main.bean.ui.table.SUTableRow;
 import java.util.List;
 
@@ -29,6 +29,8 @@ public interface DatabaseDAOInter {
 
     boolean pasteTable(String information, SUDatabaseBean DBName, String tbLName);
 
+    public boolean deleteTable(SUTableBean table);
+    
     boolean renameTable(SUTableBean table, String newTblName);
 
     public SUQueryResult runQuery(SUQueryBean query) throws Exception;
@@ -49,5 +51,7 @@ public interface DatabaseDAOInter {
 
     public boolean createDbOptions(SUConnectionBean ui, String name, String charset, String collate);
 
-     public long insertRowByAllCell(SUConnectionBean connection, SUTableRow row);
+    public long insertRowByAllCell(SUConnectionBean connection, SUTableRow row);
+     
+    boolean saveQuery(SUConnectionBean c, SUQueryBean queryBean);
 }

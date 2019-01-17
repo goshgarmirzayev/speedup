@@ -1,13 +1,15 @@
 package com.bsptechs.main.dao.impl;
 
+import com.bsptechs.main.Config;
+import com.bsptechs.main.Main;
 import com.bsptechs.main.bean.Charset;
 import com.bsptechs.main.bean.Collation;
 import com.bsptechs.main.bean.SUArrayList;
-import com.bsptechs.main.bean.SUQueryBean;
-import com.bsptechs.main.bean.SUQueryResult;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUConnectionBean;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUDatabaseBean;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUTableBean;
+import com.bsptechs.main.bean.server.SUQueryBean;
+import com.bsptechs.main.bean.server.SUQueryResult;
+import com.bsptechs.main.bean.server.SUConnectionBean;
+import com.bsptechs.main.bean.server.SUDatabaseBean;
+import com.bsptechs.main.bean.server.SUTableBean;
 import com.bsptechs.main.bean.ui.table.SUTableCell;
 import com.bsptechs.main.bean.ui.table.SUTableColumn;
 import com.bsptechs.main.bean.ui.table.SUTableRow;
@@ -19,13 +21,11 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import com.bsptechs.main.util.LogUtil;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Vector;
 
 /**
  *
@@ -149,6 +149,14 @@ public class DatabaseDAOImpl extends AbstractDatabase implements DatabaseDAOInte
         PreparedStatement stmt1 = conn.prepareStatement("INSERT " + DBName + "." + newTbLName + "SELECT * FROM " + DBName + "." + tbLName);
 
         stmt.executeUpdate();
+        return true;
+    }
+
+    @SneakyThrows
+    @Override
+    public boolean deleteTable(SUTableBean table) {
+        Connection conn = connect(table.getDatabase().getConnection());
+        Statement stmt = conn.prepareStatement("DROP TABLE " + table.getDatabase() + "." + table);
         return true;
     }
 
@@ -483,4 +491,23 @@ public class DatabaseDAOImpl extends AbstractDatabase implements DatabaseDAOInte
 
     }
 
+    @SneakyThrows
+    @Override
+    public boolean saveQuery(SUConnectionBean c, SUQueryBean queryBean) {
+        SUArrayList<SUConnectionBean> connectionList = Main.instance().getConnectionTree().getConnectionBeans();
+        connectionList.remove(c);
+        List<SUQueryBean> queries = new ArrayList<>();
+        queries.add(queryBean);
+        List<SUQueryBean> oldQueries = c.getQueries();
+        if (oldQueries != null) {
+            for (int i = 0; i < oldQueries.size(); i++) {
+                queries.add(oldQueries.get(i));
+            }
+        }
+        c.setQueries(queries);
+        connectionList.add(c);
+        Config.instance().setConnectionBeans(connectionList);
+        Config.instance().saveConfig();
+        return true;
+     }
 }

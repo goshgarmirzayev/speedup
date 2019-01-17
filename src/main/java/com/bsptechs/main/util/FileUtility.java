@@ -5,7 +5,7 @@
  */
 package com.bsptechs.main.util;
 
-import com.bsptechs.main.bean.SUQueryBean;
+import com.bsptechs.main.bean.server.SUQueryBean;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;

@@ -6,7 +6,7 @@
 package com.bsptechs.main.bean.ui.table;
 
 import com.bsptechs.main.bean.SUArrayList;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUTableBean;
+import com.bsptechs.main.bean.server.SUTableBean;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;

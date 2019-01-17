@@ -8,11 +8,9 @@ package com.bsptechs.main.bean.ui.frame;
 import com.bsptechs.main.Config;
 import com.bsptechs.main.Main;
 import com.bsptechs.main.bean.SUArrayList;
-import com.bsptechs.main.bean.SUQueryBean;
-import com.bsptechs.main.bean.ui.panel.queryresult.PanelQuery;
-import com.bsptechs.main.bean.ui.tree.database.SUTableTreeNode;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUConnectionBean;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUDatabaseBean;
+import com.bsptechs.main.bean.server.SUQueryBean;
+import com.bsptechs.main.bean.server.SUConnectionBean;
+import com.bsptechs.main.bean.server.SUDatabaseBean;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import com.bsptechs.main.util.LogUtil;
 import java.util.List;
@@ -26,7 +24,6 @@ public class SetQueryLocation extends javax.swing.JFrame {
     /**
      * Creates new form SetQueryLocation
      */
-    SUTableTreeNode table = (SUTableTreeNode) Main.instance().getConnectionTree().getSelectedNode();
     DatabaseDAOImpl dao = new DatabaseDAOImpl();
     private String queryBody;
 
@@ -38,6 +35,7 @@ public class SetQueryLocation extends javax.swing.JFrame {
         initComponents();
         frameFirstOpened();
         fillConnectionCombo();
+        fillDatabaseCmbo();
     }
 
     /**
@@ -71,14 +69,6 @@ public class SetQueryLocation extends javax.swing.JFrame {
         });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowActivated(java.awt.event.WindowEvent evt) {
-                formWindowActivated(evt);
-            }
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                formWindowOpened(evt);
-            }
-        });
 
         txtQueryName.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(0, 0, 153)));
 
@@ -136,12 +126,6 @@ public class SetQueryLocation extends javax.swing.JFrame {
         jLabel3.setText("Connection:");
 
         jLabel4.setText("Schema:");
-
-        cmbDatabase.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cmbDatabaseItemStateChanged(evt);
-            }
-        });
 
         connectionCmbo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -226,7 +210,7 @@ public class SetQueryLocation extends javax.swing.JFrame {
         int thisSizeWithoutUserChooice = this.getHeight() - pnlUserChoice.getHeight();
         this.setSize(this.getWidth(), thisSizeWithoutUserChooice);
         pnlUserChoice.setVisible(false);
-        lblQueryLocation.setText(table.getTable().getDatabase().getConnection().getName());
+       // lblQueryLocation.setText(Main.instance().getConnectionTree().getSelectedConnectionNode().getConnection().getName());
 
     }
 
@@ -245,10 +229,9 @@ public class SetQueryLocation extends javax.swing.JFrame {
         cmbDatabase.addItem(firstDatabase);
         SUConnectionBean selectedConnection = (SUConnectionBean) connectionCmbo.getSelectedItem();
         SUArrayList<SUDatabaseBean> databases = dao.getAllDatabases(selectedConnection);
-        for (SUDatabaseBean database : databases) {
+        databases.forEach((database) -> {
             cmbDatabase.addItem(database);
-        }
-
+        });
     }
 
     private void saveQuery() {
@@ -256,10 +239,7 @@ public class SetQueryLocation extends javax.swing.JFrame {
         SUConnectionBean selectedConnection = (SUConnectionBean) connectionCmbo.getSelectedItem();
         SUDatabaseBean selectedDatabase = (SUDatabaseBean) cmbDatabase.getSelectedItem();
         SUQueryBean savedQuery = new SUQueryBean(selectedConnection, selectedDatabase, queryBody, queryName);
-        SUArrayList<SUQueryBean> queries = new SUArrayList<>();
-        queries.add(savedQuery);
-        Config.instance().setQueryBeans(queries);
-        Config.instance().saveConfig();
+        dao.saveQuery(selectedConnection, savedQuery);
     }
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         this.dispose();
@@ -294,24 +274,11 @@ public class SetQueryLocation extends javax.swing.JFrame {
     }//GEN-LAST:event_userChoiceActionPerformed
 
     private void cmbConnectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbConnectionActionPerformed
-        // TODO add your handling code here:
+     
     }//GEN-LAST:event_cmbConnectionActionPerformed
 
-    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
-        // TODO add your handling code here:
-    }//GEN-LAST:event_formWindowActivated
-
-    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-
-    }//GEN-LAST:event_formWindowOpened
-
-    private void cmbDatabaseItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbDatabaseItemStateChanged
-
-    }//GEN-LAST:event_cmbDatabaseItemStateChanged
-
     private void connectionCmboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_connectionCmboItemStateChanged
-        fillDatabaseCmbo();
-        lblQueryLocation.setText(connectionCmbo.getSelectedItem().toString());
+       lblQueryLocation.setText(connectionCmbo.getSelectedItem().toString());
     }//GEN-LAST:event_connectionCmboItemStateChanged
 
     /**

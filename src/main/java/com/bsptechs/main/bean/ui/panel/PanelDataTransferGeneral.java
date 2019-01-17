@@ -1,10 +1,10 @@
 package com.bsptechs.main.bean.ui.panel;
 
 import com.bsptechs.main.Main;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUConnectionBean;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUDatabaseBean;
-import com.bsptechs.main.bean.ui.tree.database.SUConnectionTreeNode;
-import com.bsptechs.main.bean.ui.tree.database.SUDatabaseTreeNode;
+import com.bsptechs.main.bean.server.SUConnectionBean;
+import com.bsptechs.main.bean.server.SUDatabaseBean;
+import com.bsptechs.main.bean.ui.tree.server.bundle.SUConnectionBundleTreeNode;
+import com.bsptechs.main.bean.ui.tree.server.bundle.SUDatabaseBundleTreeNode;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import com.bsptechs.main.dao.inter.DatabaseDAOInter;
 import java.util.List;
@@ -23,8 +23,8 @@ public class PanelDataTransferGeneral extends javax.swing.JPanel {
 	pnlInformationSourceSide.setVisible(false);
 	pnlInformationTargetSide.setVisible(false);
 
-	SUDatabaseTreeNode db = null;
-	SUConnectionTreeNode cn = Main.instance().getConnectionTree().getCurrentConnectionNode();
+	SUDatabaseBundleTreeNode db = null;
+	SUConnectionBundleTreeNode cn = Main.instance().getConnectionTree().getCurrentConnectionNode();
 	if (cn == null) {
 	    cn = Main.instance().getConnectionTree().getConnectionNodes().get(0);
 	}
@@ -33,16 +33,16 @@ public class PanelDataTransferGeneral extends javax.swing.JPanel {
 	preparePanel(cn, db);
     }
  
-    public final void preparePanel(SUConnectionTreeNode connection, SUDatabaseTreeNode database) {
+    public final void preparePanel(SUConnectionBundleTreeNode connection, SUDatabaseBundleTreeNode database) {
 	prepareConnectionCombobox(connection);
 	prepareDatabasesCombobox(connection, database);
     }
 
-    public void prepareConnectionCombobox(SUConnectionTreeNode connection) {
+    public void prepareConnectionCombobox(SUConnectionBundleTreeNode connection) {
 
 	LogUtil.log("prepareConnectionCombobox=" + connection);
 	comboboxConnectionSource.removeAllItems();
-	List<SUConnectionTreeNode> list = Main.instance().getConnectionTree().getConnectionNodes();
+	List<SUConnectionBundleTreeNode> list = Main.instance().getConnectionTree().getConnectionNodes();
 	if (list == null) {
 	    return;
 	}
@@ -56,7 +56,7 @@ public class PanelDataTransferGeneral extends javax.swing.JPanel {
 	}
     }
 
-    public void prepareDatabasesCombobox(SUConnectionTreeNode connection, SUDatabaseTreeNode database) {
+    public void prepareDatabasesCombobox(SUConnectionBundleTreeNode connection, SUDatabaseBundleTreeNode database) {
 	if (connection == null) {
 	    return;
 	}
@@ -72,14 +72,14 @@ public class PanelDataTransferGeneral extends javax.swing.JPanel {
 	comboboxDatabaseSource.setSelectedItem(database);
     }
 
-    public SUDatabaseTreeNode getSelectedDatabase() {
+    public SUDatabaseBundleTreeNode getSelectedDatabase() {
 	Object obj = comboboxDatabaseSource.getSelectedItem();
 
-	return (SUDatabaseTreeNode) obj;
+	return (SUDatabaseBundleTreeNode) obj;
     }
 
-    public SUConnectionTreeNode getSelectedConnection() {
-	return (SUConnectionTreeNode) comboboxConnectionSource.getSelectedItem();
+    public SUConnectionBundleTreeNode getSelectedConnection() {
+	return (SUConnectionBundleTreeNode) comboboxConnectionSource.getSelectedItem();
     }
 
     /**

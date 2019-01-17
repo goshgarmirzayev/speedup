@@ -5,8 +5,8 @@
  */
 package com.bsptechs.main.bean.ui.panel.queryresult;
 
-import com.bsptechs.main.bean.SUQueryBean;
-import com.bsptechs.main.bean.SUQueryResult;
+import com.bsptechs.main.bean.server.SUQueryBean;
+import com.bsptechs.main.bean.server.SUQueryResult;
 import com.bsptechs.main.bean.ui.table.SUTable;
 import com.bsptechs.main.bean.ui.table.SUTableRow;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
@@ -92,7 +92,7 @@ public class PanelQueryResult extends javax.swing.JPanel {
                 .addComponent(btnSaveChangesForTable, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(218, Short.MAX_VALUE))
+                .addContainerGap(315, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -134,7 +134,7 @@ public class PanelQueryResult extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
             .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(

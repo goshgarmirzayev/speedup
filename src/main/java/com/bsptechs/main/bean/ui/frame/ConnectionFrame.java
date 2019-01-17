@@ -2,7 +2,7 @@ package com.bsptechs.main.bean.ui.frame;
 
 import com.bsptechs.main.Main;
 import com.bsptechs.main.Config;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUConnectionBean;
+import com.bsptechs.main.bean.server.SUConnectionBean;
 import com.bsptechs.main.util.Util;
 import org.apache.commons.lang3.StringUtils;
 
@@ -344,6 +344,7 @@ public class ConnectionFrame extends javax.swing.JFrame {
         } else {
             Main.instance().getConnectionTree().addConnectionNode(filledConnection);
         }
+        Config.instance().setConnectionBeans( Main.instance().getConnectionTree().getConnectionBeans());
         Config.instance().saveConfig();
         this.dispose();
     }//GEN-LAST:event_btnOkActionPerformed

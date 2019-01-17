@@ -7,14 +7,16 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-public abstract class SUAbstractTreeNode extends DefaultMutableTreeNode {
+public abstract class SUAbstractTreeNode<T> extends DefaultMutableTreeNode {
 
     private static final long serialVersionUID = 1L;
 
     protected final SUAbstractTree tree;
+    protected final T dataBean;
 
-    public SUAbstractTreeNode(SUAbstractTree tree) {
+    public SUAbstractTreeNode(SUAbstractTree tree, T dataBean) {
         this.tree = tree;
+        this.dataBean = dataBean;
     }
 
     public abstract void onClick();
@@ -72,14 +74,19 @@ public abstract class SUAbstractTreeNode extends DefaultMutableTreeNode {
         nodeStructureChanged();
 
     }
+    
 
-    public <T> List<T> getChildren(Class<T> clazz) {
+    public <E> SUArrayList<E> getChildren(Class<E> clazz) {
         Enumeration en = this.children();
-        SUArrayList<T> list = new SUArrayList<>();
+        SUArrayList<E> list = new SUArrayList<>();
         while (en.hasMoreElements()) {
-            list.add((T) en.nextElement());
+            list.add((E) en.nextElement());
         }
         return list;
+    }
+    
+    public SUArrayList<SUAbstractTreeNode> getChildren(){
+        return getChildren(SUAbstractTreeNode.class);
     }
 
     @Override

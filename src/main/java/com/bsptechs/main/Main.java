@@ -1,11 +1,14 @@
 package com.bsptechs.main;
 
+import com.bsptechs.main.bean.SUArrayList;
+import com.bsptechs.main.bean.ui.button.SUObjectButton;
 import com.bsptechs.main.bean.ui.frame.ConnectionFrame;
-import com.bsptechs.main.bean.ui.panel.queryresult.PanelQuery;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUConnectionBean;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUDatabaseBean;
-import com.bsptechs.main.bean.ui.tree.database.SUDatabaseTree;
-import com.bsptechs.main.bean.ui.tree.database.SUConnectionTreeNode;
+import com.bsptechs.main.bean.ui.panel.queryresult.PanelQueryEditor;
+import com.bsptechs.main.bean.server.SUConnectionBean;
+import com.bsptechs.main.bean.server.SUDatabaseBean;
+import com.bsptechs.main.bean.ui.button.SUAbstractButton;
+import com.bsptechs.main.bean.ui.tree.server.SUServerTree;
+import com.bsptechs.main.bean.ui.tree.server.bundle.SUConnectionBundleTreeNode;
 import com.bsptechs.main.util.Util;
 import java.awt.Color;
 import java.sql.SQLException;
@@ -13,89 +16,66 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
 import com.bsptechs.main.bean.ui.frame.DataTransferFrame;
-import com.bsptechs.main.bean.ui.frame.SignInFrom;
 import com.bsptechs.main.bean.ui.panel.PanelUiElementInformation;
-import com.bsptechs.main.bean.ui.tree.database.SUTableTreeNode;
+import com.bsptechs.main.bean.ui.panel.PanelObjectMain;
+import com.bsptechs.main.bean.ui.tree.server.SUTableTreeNode;
+import com.bsptechs.main.bean.ui.tree.server.bundle.SUQueryBundleTreeNode;
 import com.bsptechs.main.util.ImageUtil;
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.JTabbedPane;
 import lombok.SneakyThrows;
-import com.bsptechs.main.util.LogUtil;
- 
+
 public class Main extends javax.swing.JFrame {
-
-    SUConnectionTreeNode conn = null;
-
+    
+    SUConnectionBundleTreeNode conn = null;
+    
     public Main() {
         initComponents();
         btnNewQuery.setEnabled(false);
         menuNewQuery.setEnabled(false);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         setIcons();
-        LogUtil.log(getTabPanesTableName());
     }
-
+    
     public PanelUiElementInformation getInformationPanel() {
         return (PanelUiElementInformation) pnlUiElementInformation;
     }
-
-    public JTabbedPane getTabbedPane() {
-        return tabTables;
+    
+    public PanelObjectMain getObjectTab() {
+        return tabObjects;
     }
-
+    
     public JTabbedPane getTabbedPaneCenter() {
         return tabbedPaneCenter;
-        
     }
-
+    
     public void setIcons() {
         btnNewConnection.setIcon(ImageUtil.getIcon("mainframe/connection.png"));
-        btnNewQuery.setIcon(ImageUtil.getIcon("mainframe/newquery.png"));
         btnTable.setIcon(ImageUtil.getIcon("mainframe/table.png"));
         btnView.setIcon(ImageUtil.getIcon("mainframe/view.png"));
         btnFunctions.setIcon(ImageUtil.getIcon("mainframe/function.png"));
         btnEvent.setIcon(ImageUtil.getIcon("mainframe/event.png"));
         btnUsers.setIcon(ImageUtil.getIcon("mainframe/user.png"));
-        btnQuery.setIcon(ImageUtil.getIcon("mainframe/query.png"));
         btnReport.setIcon(ImageUtil.getIcon("mainframe/report.png"));
         btnBackup.setIcon(ImageUtil.getIcon("mainframe/backup.png"));
         btnAutomation.setIcon(ImageUtil.getIcon("mainframe/automation.png"));
         btnModel.setIcon(ImageUtil.getIcon("mainframe/model.png"));
+        btnNewQuery.setIcon(ImageUtil.getIcon("mainframe/newquery.png"));
     }
-
+    
     public void refreshNewQuery() {
         boolean found = getConnectionTree().hasAnyActiveConnection();
         btnNewQuery.setEnabled(found);
         menuNewQuery.setEnabled(found);
     }
-
+    
     public void prepare() throws Exception {
         Config.initialize();
         getConnectionTree().addConnectionNodes(Config.getConnectionBeans());
     }
-
-    public List<JTabbedPane> getTabPanesTable() {
-        List<JTabbedPane> tabbList = new ArrayList<>();
-        tabbList.add(tabQuery);
-        tabbList.add(tabDesignTable);
-        tabbList.add(tabNewTable);
-        tabbList.add(tabTables);
-
-        return tabbList;
-    }
-
-    public List<String> getTabPanesTableName() {
-        List<String> names = new ArrayList<>();
-        for (int i = 0; i < tabbedPaneCenter.getTabCount(); i++) {
-            names.add(tabbedPaneCenter.getTitleAt(i));
-        }
-        return names;
-    }
-
-    public SUDatabaseTree getConnectionTree() {
-        return (SUDatabaseTree) connectionTree;
+    
+    public SUServerTree getConnectionTree() {
+        return (SUServerTree) connectionTree;
     }
 
     /**
@@ -116,7 +96,7 @@ public class Main extends javax.swing.JFrame {
         btnAutomation = new javax.swing.JButton();
         btnBackup = new javax.swing.JButton();
         btnReport = new javax.swing.JButton();
-        btnQuery = new javax.swing.JButton();
+        btnQuery = new SUObjectButton("mainframe/query.png","Query",new PanelObjectMain());
         btnUsers = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         btnNewConnection = new javax.swing.JButton();
@@ -126,14 +106,10 @@ public class Main extends javax.swing.JFrame {
         splitPaneCenter = new javax.swing.JSplitPane();
         panelLeft = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        connectionTree = new com.bsptechs.main.bean.ui.tree.database.SUDatabaseTree();
+        connectionTree = new com.bsptechs.main.bean.ui.tree.server.SUServerTree();
         tabbedPaneCenter = new javax.swing.JTabbedPane();
-        tabQuery = new javax.swing.JTabbedPane();
-        tabDesignTable = new javax.swing.JTabbedPane();
-        tabNewTable = new javax.swing.JTabbedPane();
-        tabTables = new javax.swing.JTabbedPane();
+        tabObjects = new com.bsptechs.main.bean.ui.panel.PanelObjectMain();
         pnlUiElementInformation = new com.bsptechs.main.bean.ui.panel.PanelUiElementInformation();
-        signIn = new javax.swing.JToggleButton();
         menuBarTop = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuNewConnection = new javax.swing.JMenuItem();
@@ -168,11 +144,11 @@ public class Main extends javax.swing.JFrame {
         btnEvent.setPreferredSize(new java.awt.Dimension(80, 61));
         btnEvent.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnEvent.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnEventMouseEntered(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnEventMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnEventMouseEntered(evt);
             }
         });
 
@@ -184,11 +160,11 @@ public class Main extends javax.swing.JFrame {
         btnFunctions.setPreferredSize(new java.awt.Dimension(80, 61));
         btnFunctions.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnFunctions.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnFunctionsMouseEntered(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnFunctionsMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnFunctionsMouseEntered(evt);
             }
         });
 
@@ -200,11 +176,11 @@ public class Main extends javax.swing.JFrame {
         btnView.setPreferredSize(new java.awt.Dimension(80, 61));
         btnView.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnView.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnViewMouseEntered(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnViewMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnViewMouseEntered(evt);
             }
         });
         btnView.addActionListener(new java.awt.event.ActionListener() {
@@ -321,11 +297,11 @@ public class Main extends javax.swing.JFrame {
         btnUsers.setPreferredSize(new java.awt.Dimension(80, 61));
         btnUsers.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnUsers.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnUsersMouseEntered(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnUsersMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnUsersMouseEntered(evt);
             }
         });
         btnUsers.addActionListener(new java.awt.event.ActionListener() {
@@ -431,7 +407,7 @@ public class Main extends javax.swing.JFrame {
                 .addComponent(btnAutomation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnModel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 184, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         pnlMainTopLayout.setVerticalGroup(
             pnlMainTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -488,18 +464,8 @@ public class Main extends javax.swing.JFrame {
 
         tabbedPaneCenter.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         tabbedPaneCenter.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        tabbedPaneCenter.setEnabled(false);
         tabbedPaneCenter.setMaximumSize(new java.awt.Dimension(0, 0));
-
-        tabQuery.setMaximumSize(new java.awt.Dimension(0, 0));
-        tabbedPaneCenter.addTab("Query", tabQuery);
-
-        tabDesignTable.setMaximumSize(new java.awt.Dimension(0, 0));
-        tabbedPaneCenter.addTab("Design Table", tabDesignTable);
-
-        tabNewTable.setMaximumSize(new java.awt.Dimension(0, 0));
-        tabbedPaneCenter.addTab("New Table", tabNewTable);
-        tabbedPaneCenter.addTab("Tables", tabTables);
+        tabbedPaneCenter.addTab("Objects", tabObjects);
 
         splitPaneCenter.setRightComponent(tabbedPaneCenter);
         tabbedPaneCenter.getAccessibleContext().setAccessibleName("tabbedPaneCenter");
@@ -523,30 +489,17 @@ public class Main extends javax.swing.JFrame {
             .addComponent(splitPaneCenter, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        signIn.setText("Sign In");
-        signIn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                signInActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout panelWrapperLayout = new javax.swing.GroupLayout(panelWrapper);
         panelWrapper.setLayout(panelWrapperLayout);
         panelWrapperLayout.setHorizontalGroup(
             panelWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panelCenter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(panelWrapperLayout.createSequentialGroup()
-                .addComponent(pnlMainTop, javax.swing.GroupLayout.PREFERRED_SIZE, 1208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(signIn, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(67, 67, 67))
+            .addComponent(pnlMainTop, javax.swing.GroupLayout.DEFAULT_SIZE, 1435, Short.MAX_VALUE)
         );
         panelWrapperLayout.setVerticalGroup(
             panelWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelWrapperLayout.createSequentialGroup()
-                .addGroup(panelWrapperLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlMainTop, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(signIn, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addComponent(pnlMainTop, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(panelCenter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -849,36 +802,32 @@ public class Main extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_menuDataTransferActionPerformed
-
-    private void btnQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQueryActionPerformed
-        //Goshgar Dolduracaq
-    }//GEN-LAST:event_btnQueryActionPerformed
+    
 
     private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnBackupActionPerformed
 
-    private void signInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInActionPerformed
-       new SignInFrom().setVisible(true);
-    }//GEN-LAST:event_signInActionPerformed
+    private void btnQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQueryActionPerformed
 
+    }//GEN-LAST:event_btnQueryActionPerformed
+    
     @SneakyThrows
-    public PanelQuery prepareNewQuery(String queryStr, boolean run) {
-        SUDatabaseTree tree = getConnectionTree();
+    public PanelQueryEditor prepareNewQuery(String queryStr, boolean run) {
+        SUServerTree tree = getConnectionTree();
         SUTableTreeNode table = tree.getSelectedTableNode();
         SUConnectionBean conn = table != null ? table.getTable().getDatabase().getConnection() : tree.getCurrentConnectionNode().getConnection();
         SUDatabaseBean db = table != null ? table.getTable().getDatabase() : tree.getCurrentDatabaseNode().getDatabase();
-
-        PanelQuery panel = new PanelQuery(conn, db, queryStr);
-        tabbedPaneCenter.setEnabled(true);
-        Util.addPanelToTab(tabQuery, panel, "Query");
+        
+        PanelQueryEditor panel = new PanelQueryEditor(conn, db, queryStr);
+        Util.addPanelToTab(tabbedPaneCenter, panel, "Query");
         if (run) {
             panel.runQuery();
         }
-
+        
         return panel;
     }
-
+    
     private void btnNewQueryActionPerformed(java.awt.event.ActionEvent evt) {
         prepareNewQuery(null, false);
     }
@@ -887,11 +836,11 @@ public class Main extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     private static Main main = null;
-
+    
     public static Main instance() {
         return main;
     }
-
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -903,21 +852,21 @@ public class Main extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
-
+                    
                 }
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(Main.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (InstantiationException ex) {
             java.util.logging.Logger.getLogger(Main.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(Main.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Main.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -987,12 +936,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel panelWrapper;
     private javax.swing.JPanel pnlMainTop;
     private com.bsptechs.main.bean.ui.panel.PanelUiElementInformation pnlUiElementInformation;
-    private javax.swing.JToggleButton signIn;
     private javax.swing.JSplitPane splitPaneCenter;
-    private javax.swing.JTabbedPane tabDesignTable;
-    private javax.swing.JTabbedPane tabNewTable;
-    private javax.swing.JTabbedPane tabQuery;
-    private javax.swing.JTabbedPane tabTables;
+    private com.bsptechs.main.bean.ui.panel.PanelObjectMain tabObjects;
     private javax.swing.JTabbedPane tabbedPaneCenter;
     // End of variables declaration//GEN-END:variables
 }

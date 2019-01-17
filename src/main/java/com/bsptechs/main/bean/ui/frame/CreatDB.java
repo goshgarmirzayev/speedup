@@ -8,8 +8,8 @@ package com.bsptechs.main.bean.ui.frame;
 import com.bsptechs.main.Main;
 import com.bsptechs.main.bean.Charset;
 import com.bsptechs.main.bean.Collation;
-import com.bsptechs.main.bean.ui.tree.database.SUConnectionTreeNode;
-import com.bsptechs.main.bean.ui.tree.database.SUDatabaseTreeNode;
+import com.bsptechs.main.bean.ui.tree.server.bundle.SUConnectionBundleTreeNode;
+import com.bsptechs.main.bean.ui.tree.server.bundle.SUDatabaseBundleTreeNode;
 
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import java.util.List;
@@ -23,8 +23,8 @@ import com.bsptechs.main.util.LogUtil;
 public class CreatDB extends javax.swing.JFrame {
 
     DatabaseDAOImpl databaseDAOImpl = new DatabaseDAOImpl();
-    SUDatabaseTreeNode database;
-    SUConnectionTreeNode connection = (SUConnectionTreeNode) Main.instance().getConnectionTree().getSelectedNode();
+    SUDatabaseBundleTreeNode database;
+    SUConnectionBundleTreeNode connection = (SUConnectionBundleTreeNode) Main.instance().getConnectionTree().getSelectedNode();
 
     /**
      * Creates new form CreatDB

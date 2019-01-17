@@ -6,8 +6,8 @@
 package com.bsptechs.main.bean.ui.table;
 
 import com.bsptechs.main.bean.SUArrayList;
-import com.bsptechs.main.bean.SUQueryBean;
-import com.bsptechs.main.bean.SUQueryResult;
+import com.bsptechs.main.bean.server.SUQueryBean;
+import com.bsptechs.main.bean.server.SUQueryResult;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import com.bsptechs.main.dao.inter.DatabaseDAOInter;
 import java.awt.Color;

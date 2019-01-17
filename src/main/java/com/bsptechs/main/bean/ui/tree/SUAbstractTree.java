@@ -72,8 +72,13 @@ public abstract class SUAbstractTree extends JTree {
         return node;
     }
 
-    public void fillTreeAsRoot(List<? extends SUAbstractTreeNode> listData) {
+    public void removeAllCustomTreeNodes() {
+        DefaultTreeModel treeModel = (DefaultTreeModel) this.getModel();
+        DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) treeModel.getRoot();
+        parentNode.removeAllChildren();
+    }
 
+    public void fillTreeAsRoot(List<? extends SUAbstractTreeNode> listData) {
         if (listData == null) {
             return;
         }

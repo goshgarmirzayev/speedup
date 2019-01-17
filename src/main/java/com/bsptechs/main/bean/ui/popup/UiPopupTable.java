@@ -6,15 +6,14 @@
 package com.bsptechs.main.bean.ui.popup;
 
 import com.bsptechs.main.Main;
-import com.bsptechs.main.bean.ui.panel.queryresult.PanelQuery;
-import com.bsptechs.main.Config;
-import com.bsptechs.main.bean.ui.tree.database.SUTableTreeNode;
-import com.bsptechs.main.bean.ui.tree.SUAbstractTreeNode;
+import com.bsptechs.main.bean.server.SUTableBean;
+import com.bsptechs.main.bean.ui.panel.PanelObjectMain;
+import com.bsptechs.main.bean.ui.tree.server.SUTableTreeNode;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import com.bsptechs.main.dao.inter.DatabaseDAOInter;
-import java.util.List;
 import javax.swing.JOptionPane;
 import com.bsptechs.main.util.LogUtil;
+
 /**
  *
  * @author sarkhanrasullu
@@ -43,7 +42,7 @@ public class UiPopupTable extends UiPopupAbstract {
             renameTable();
         });
         addMenuItem("Refresh", () -> {
-            
+            refresh();
         });
         addMenuItem("Empty Table", () -> {
             emptyTable();
@@ -71,7 +70,8 @@ public class UiPopupTable extends UiPopupAbstract {
 
     public void delete() {
         LogUtil.log("table delete");
-        //Tebriz burani dolduracaq
+        SUTableBean table = Main.instance().getConnectionTree().getSelectedTableNode().getTable();
+        database.deleteTable(table);
     }
 
     public void properties() {
@@ -81,15 +81,15 @@ public class UiPopupTable extends UiPopupAbstract {
 
     public void newQuery() {
         LogUtil.log("new query");
-        //Tebriz burani dolduracaq
+        Main.instance().prepareNewQuery("", false);
     }
 
     public void viewTable() {
 
         SUTableTreeNode element = Main.instance().getConnectionTree().getSelectedTableNode();
 
-        if (element !=null) {
-            Main.instance().prepareNewQuery("select * from "+element.getTable().getName(), true);
+        if (element != null) {
+            Main.instance().prepareNewQuery("select * from " + element.getTable().getName(), true);
         }
     }
 
@@ -109,9 +109,8 @@ public class UiPopupTable extends UiPopupAbstract {
                 tb.getTable().getName()
         );
         database.renameTable(tb.getTable(), newTblName);
-       tb.nodeChanged();
+        tb.nodeChanged();
     }
- 
 
     private void emptyTable() {
         SUTableTreeNode tb = getSelectedTable();
@@ -132,7 +131,6 @@ public class UiPopupTable extends UiPopupAbstract {
 
     private void pasteTable() {
         SUTableTreeNode tb = getSelectedTable();
-
         String newTblName = (String) JOptionPane.showInputDialog(
                 null,
                 "Enter name:",
@@ -147,7 +145,7 @@ public class UiPopupTable extends UiPopupAbstract {
                 selectedElementForCopy.getTable().getDatabase() + "." + selectedElementForCopy.getTable().getName(),
                 tb.getTable().getDatabase(),
                 newTblName
-        ); 
+        );
     }
 
     private void dublicateTable() {
@@ -159,5 +157,10 @@ public class UiPopupTable extends UiPopupAbstract {
     }
 
     private void objectInformation() {
+    }
+
+    private void refresh() {
+        PanelObjectMain tab = Main.instance().getObjectTab();
+        tab.refresh(Main.instance().getConnectionTree().getSelectedServerTreeNode());
     }
 }

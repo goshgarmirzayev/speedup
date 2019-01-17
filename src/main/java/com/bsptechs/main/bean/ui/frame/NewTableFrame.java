@@ -5,12 +5,10 @@
  */
 package com.bsptechs.main.bean.ui.frame;
 
-import java.awt.Checkbox;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import com.bsptechs.main.util.LogUtil;
 import com.bsptechs.main.util.LogUtil;
 
 /**

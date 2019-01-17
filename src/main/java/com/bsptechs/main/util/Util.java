@@ -6,7 +6,8 @@
 package com.bsptechs.main.util;
 
 import com.bsptechs.main.Main;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUDatabaseBean;
+import com.bsptechs.main.bean.server.SUDatabaseBean;
+import java.awt.Component;
 import java.io.File;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
@@ -42,7 +43,7 @@ public class Util {
         tab.addTab(title, panel);
         tab.setSelectedIndex(tab.getTabCount() - 1);
     }
-
+ 
     public static void centralizeJFrame(JFrame frame) {
         frame.setSize(220, 400);
         frame.setLocationRelativeTo(null);

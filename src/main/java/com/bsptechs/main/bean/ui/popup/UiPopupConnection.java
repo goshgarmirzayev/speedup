@@ -9,7 +9,7 @@ import com.bsptechs.main.Main;
 import com.bsptechs.main.bean.ui.frame.ConnectionFrame;
 import com.bsptechs.main.Config;
 import com.bsptechs.main.bean.ui.frame.CreatDB;
-import com.bsptechs.main.bean.ui.tree.database.SUConnectionTreeNode;
+import com.bsptechs.main.bean.ui.tree.server.bundle.SUConnectionBundleTreeNode;
 import com.bsptechs.main.util.LogUtil;
 /**
  *
@@ -43,15 +43,16 @@ public class UiPopupConnection extends UiPopupAbstract {
         
     }
     
-    private SUConnectionTreeNode getSelectedConnection(){
-        return (SUConnectionTreeNode) getSelectedElement();
+    private SUConnectionBundleTreeNode getSelectedConnection(){
+        return (SUConnectionBundleTreeNode) getSelectedElement();
     }
 
     public void delete() {
         LogUtil.log("delete connection");
-        SUConnectionTreeNode c = getSelectedConnection();
+        SUConnectionBundleTreeNode c = getSelectedConnection();
         c.reset();
         Main.instance().getConnectionTree().removeCustomTreeNode(c);
+        Config.instance().setConnectionBeans(Main.instance().getConnectionTree().getConnectionBeans());
         Config.instance().saveConfig();
     }
 
@@ -67,7 +68,7 @@ public class UiPopupConnection extends UiPopupAbstract {
 
     public void disconnect() {
         LogUtil.log("disconnection connection");
-        SUConnectionTreeNode cn = getSelectedConnection();
+        SUConnectionBundleTreeNode cn = getSelectedConnection();
         cn.reset();
         cn.removeAllChildren();
     }

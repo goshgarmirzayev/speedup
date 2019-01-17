@@ -5,7 +5,7 @@
  */
 package com.bsptechs.main.bean.ui.table;
 
-import com.bsptechs.main.bean.ui.tree.database.bean.SUTableBean;
+import com.bsptechs.main.bean.server.SUTableBean;
 import lombok.Data;
 
 /**

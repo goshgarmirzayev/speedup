@@ -5,11 +5,11 @@
  */
 package com.bsptechs.main.bean.ui.panel;
 
-import com.bsptechs.main.bean.ui.tree.database.bean.SUConnectionBean;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUDatabaseBean;
-import com.bsptechs.main.bean.ui.tree.database.bean.SUTableBean;
-import com.bsptechs.main.bean.ui.tree.database.SUDatabaseTreeNode;
-import com.bsptechs.main.bean.ui.tree.database.SUTableTreeNode;
+import com.bsptechs.main.bean.server.SUConnectionBean;
+import com.bsptechs.main.bean.server.SUDatabaseBean;
+import com.bsptechs.main.bean.server.SUTableBean;
+import com.bsptechs.main.bean.ui.tree.server.bundle.SUDatabaseBundleTreeNode;
+import com.bsptechs.main.bean.ui.tree.server.SUTableTreeNode;
 import com.bsptechs.main.util.ImageUtil;
 import com.bsptechs.main.util.LogUtil;
 
