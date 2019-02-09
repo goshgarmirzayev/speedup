@@ -81,7 +81,11 @@ public class SUQueryBundleTreeNode extends SUAbstractBundleTreeNode<SUQueryBean>
 
     @Override
     public void fillData() {
-
+        SUDatabaseBean selectedDatabase = Main.instance()
+                .getConnectionTree()
+                .getCurrentDatabaseNode()
+                .getDatabase();
+        List<SUQueryBean> sortedQueries = new ArrayList<>();
         if (Main.instance()
                 .getConnectionTree()
                 .getCurrentConnectionNode()
@@ -93,19 +97,17 @@ public class SUQueryBundleTreeNode extends SUAbstractBundleTreeNode<SUQueryBean>
                     .getConnection()
                     .getQueries();
             removeAllChildren();
-            SUDatabaseBean selectedDatabase = Main.instance()
-                    .getConnectionTree()
-                    .getCurrentDatabaseNode()
-                    .getDatabase();
-            System.out.println("selectedDatabase " + selectedDatabase);
-            List<SUQueryBean> sortedQueries = new ArrayList<>();
+
             for (SUQueryBean query : queries) {
                 if (selectedDatabase.equals(query.getDatabase())) {
                     sortedQueries.add(query);
                 }
+                if (query.getDatabase() == null) {
+                    sortedQueries.add(query);
+                }
             }
-            addQueries(sortedQueries);
         }
+        addQueries(sortedQueries);
     }
 
     @Override

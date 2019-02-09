@@ -20,7 +20,7 @@ import com.bsptechs.main.util.LogUtil;
  * @author Goshgar
  */
 @Data
-public class CreatDB extends javax.swing.JFrame {
+public class CreateDatabase extends javax.swing.JFrame {
 
     DatabaseDAOImpl databaseDAOImpl = new DatabaseDAOImpl();
     SUDatabaseBundleTreeNode database;
@@ -29,7 +29,7 @@ public class CreatDB extends javax.swing.JFrame {
     /**
      * Creates new form CreatDB
      */
-    public CreatDB() {
+    public CreateDatabase() {
         initComponents();
         fillCharsetCombo();
         fillCollationCombo();
@@ -295,21 +295,23 @@ public class CreatDB extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CreatDB.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CreateDatabase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CreatDB.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CreateDatabase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CreatDB.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CreateDatabase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CreatDB.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CreateDatabase.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CreatDB().setVisible(true);
+                new CreateDatabase().setVisible(true);
             }
         });
     }

@@ -12,7 +12,6 @@ import com.bsptechs.main.bean.server.SUQueryBean;
 import com.bsptechs.main.bean.server.SUConnectionBean;
 import com.bsptechs.main.bean.server.SUDatabaseBean;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
-import com.bsptechs.main.util.LogUtil;
 import java.util.List;
 
 /**
@@ -26,6 +25,8 @@ public class SetQueryLocation extends javax.swing.JFrame {
      */
     DatabaseDAOImpl dao = new DatabaseDAOImpl();
     private String queryBody;
+    private final SUDatabaseBean selectedDatabase = Main.instance().getConnectionTree().getCurrentDatabaseNode().getDatabase();
+    private final SUConnectionBean selectedConnection = Main.instance().getConnectionTree().getCurrentConnectionNode().getConnection();
 
     public void setQueryBody(String queryBody) {
         this.queryBody = queryBody;
@@ -47,7 +48,6 @@ public class SetQueryLocation extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        cmbConnection = new javax.swing.JComboBox<>();
         pnlUserAgre = new javax.swing.JPanel();
         txtQueryName = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -58,15 +58,9 @@ public class SetQueryLocation extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         cmbDatabase = new javax.swing.JComboBox<>();
-        connectionCmbo = new javax.swing.JComboBox<>();
+        cmbConnection = new javax.swing.JComboBox<>();
         btnCancel = new javax.swing.JButton();
         btnSubmit = new javax.swing.JButton();
-
-        cmbConnection.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbConnectionActionPerformed(evt);
-            }
-        });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -127,9 +121,15 @@ public class SetQueryLocation extends javax.swing.JFrame {
 
         jLabel4.setText("Schema:");
 
-        connectionCmbo.addItemListener(new java.awt.event.ItemListener() {
+        cmbDatabase.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                connectionCmboItemStateChanged(evt);
+                cmbDatabaseItemStateChanged(evt);
+            }
+        });
+
+        cmbConnection.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbConnectionItemStateChanged(evt);
             }
         });
 
@@ -145,7 +145,7 @@ public class SetQueryLocation extends javax.swing.JFrame {
                         .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(connectionCmbo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(cmbConnection, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         pnlUserChoiceLayout.setVerticalGroup(
             pnlUserChoiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,7 +153,7 @@ public class SetQueryLocation extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(connectionCmbo, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cmbConnection, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -210,16 +210,15 @@ public class SetQueryLocation extends javax.swing.JFrame {
         int thisSizeWithoutUserChooice = this.getHeight() - pnlUserChoice.getHeight();
         this.setSize(this.getWidth(), thisSizeWithoutUserChooice);
         pnlUserChoice.setVisible(false);
-       // lblQueryLocation.setText(Main.instance().getConnectionTree().getSelectedConnectionNode().getConnection().getName());
-
     }
 
     private List<SUConnectionBean> fillConnectionCombo() {
         Config.initialize();
         List<SUConnectionBean> connections = Config.getConnectionBeans();
-        for (SUConnectionBean connection : connections) {
-            connectionCmbo.addItem(connection);
-        }
+        connections.forEach((connection) -> {
+            cmbConnection.addItem(connection);
+        });
+        cmbConnection.setSelectedItem(selectedConnection);
         return connections;
     }
 
@@ -227,19 +226,21 @@ public class SetQueryLocation extends javax.swing.JFrame {
         cmbDatabase.removeAllItems();
         SUDatabaseBean firstDatabase = null;
         cmbDatabase.addItem(firstDatabase);
-        SUConnectionBean selectedConnection = (SUConnectionBean) connectionCmbo.getSelectedItem();
+        SUConnectionBean selectedConnection = (SUConnectionBean) cmbConnection.getSelectedItem();
         SUArrayList<SUDatabaseBean> databases = dao.getAllDatabases(selectedConnection);
         databases.forEach((database) -> {
             cmbDatabase.addItem(database);
         });
+        cmbDatabase.setSelectedItem(selectedDatabase);
     }
 
     private void saveQuery() {
         String queryName = txtQueryName.getText();
-        SUConnectionBean selectedConnection = (SUConnectionBean) connectionCmbo.getSelectedItem();
+        SUConnectionBean selectedConnection = (SUConnectionBean) cmbConnection.getSelectedItem();
         SUDatabaseBean selectedDatabase = (SUDatabaseBean) cmbDatabase.getSelectedItem();
         SUQueryBean savedQuery = new SUQueryBean(selectedConnection, selectedDatabase, queryBody, queryName);
         dao.saveQuery(selectedConnection, savedQuery);
+        Config.initialize();
     }
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         this.dispose();
@@ -273,14 +274,20 @@ public class SetQueryLocation extends javax.swing.JFrame {
 
     }//GEN-LAST:event_userChoiceActionPerformed
 
-    private void cmbConnectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbConnectionActionPerformed
-     
-    }//GEN-LAST:event_cmbConnectionActionPerformed
+    private void cmbConnectionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbConnectionItemStateChanged
+        if (cmbDatabase.getSelectedItem() != null) {
+            lblQueryLocation.setText(cmbConnection.getSelectedItem().toString() + "/" + cmbDatabase.getSelectedItem().toString());
+        }
+        lblQueryLocation.setText(cmbConnection.getSelectedItem().toString());
+    }//GEN-LAST:event_cmbConnectionItemStateChanged
 
-    private void connectionCmboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_connectionCmboItemStateChanged
-       lblQueryLocation.setText(connectionCmbo.getSelectedItem().toString());
-    }//GEN-LAST:event_connectionCmboItemStateChanged
-
+    private void cmbDatabaseItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbDatabaseItemStateChanged
+        if (cmbDatabase.getSelectedItem() == null) {
+            lblQueryLocation.setText(cmbConnection.getSelectedItem().toString());
+        } else {
+            lblQueryLocation.setText(cmbConnection.getSelectedItem().toString() + "/" + cmbDatabase.getSelectedItem().toString());
+        }
+    }//GEN-LAST:event_cmbDatabaseItemStateChanged
     /**
      * @param args the command line arguments
      */
@@ -321,7 +328,6 @@ public class SetQueryLocation extends javax.swing.JFrame {
     private javax.swing.JButton btnSubmit;
     private javax.swing.JComboBox<SUConnectionBean> cmbConnection;
     private javax.swing.JComboBox<SUDatabaseBean> cmbDatabase;
-    private javax.swing.JComboBox<SUConnectionBean> connectionCmbo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

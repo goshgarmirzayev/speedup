@@ -5,7 +5,6 @@
  */
 package com.bsptechs.main.bean.ui.tree.server.bundle;
 
-import com.bsptechs.main.bean.SUArrayList;
 import com.bsptechs.main.bean.ui.tree.server.SUAbstractServerTreeNode;
 import com.bsptechs.main.bean.ui.tree.server.SUServerTree;
 
