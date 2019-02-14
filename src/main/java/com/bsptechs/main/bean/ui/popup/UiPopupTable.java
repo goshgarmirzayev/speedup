@@ -11,6 +11,7 @@ import com.bsptechs.main.bean.ui.panel.PanelObjectMain;
 import com.bsptechs.main.bean.ui.tree.server.SUTableTreeNode;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import com.bsptechs.main.dao.inter.DatabaseDAOInter;
+import com.bsptechs.main.util.FileUtility;
 import javax.swing.JOptionPane;
 import com.bsptechs.main.util.LogUtil;
 
@@ -122,15 +123,16 @@ public class UiPopupTable extends UiPopupAbstract {
         database.truncateTable(tb.getTable().getDatabase(), tb.getTable().getName());
     }
 
-    private SUTableTreeNode selectedElementForCopy;
+    private final SUTableBean selectedElementForCopy = getSelectedTable().getTable();
 
     private void copyTable() {
-        SUTableTreeNode tb = getSelectedTable();
-        this.selectedElementForCopy = tb;
+        FileUtility.writeObjectToFile(selectedElementForCopy, "forCopy.copy");
+
     }
 
     private void pasteTable() {
         SUTableTreeNode tb = getSelectedTable();
+        SUTableBean copyTable = (SUTableBean) FileUtility.readFileDeserialize("forCopy.copy");
         String newTblName = (String) JOptionPane.showInputDialog(
                 null,
                 "Enter name:",
@@ -138,11 +140,11 @@ public class UiPopupTable extends UiPopupAbstract {
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 null,
-                tb.getTable().getName()
+                copyTable.getName()
         );
 
         database.pasteTable(
-                selectedElementForCopy.getTable().getDatabase() + "." + selectedElementForCopy.getTable().getName(),
+                copyTable.getDatabase() + "." + copyTable.getName(),
                 tb.getTable().getDatabase(),
                 newTblName
         );

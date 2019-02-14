@@ -68,12 +68,12 @@ public class Util {
             String source = chooser.getSelectedFile().getAbsolutePath() + "\\" + chooser.getSelectedFile().getName();
             String executeCmd = "C:\\Program Files\\MySQL\\MySQL Server 5.5\\bin\\mysql -u " + Main.instance()
                     .getConnectionTree()
-                    .getSelectedConnectionNode()
+                    .getCurrentConnectionNode()
                     .getConnection()
                     .getUserName()
                     + " -p " + Main.instance().
                             getConnectionTree().
-                            getSelectedConnectionNode().
+                            getCurrentConnectionNode().
                             getConnection().
                             getPassword()
                     + " " + element.getName()

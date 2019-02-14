@@ -7,6 +7,7 @@ package com.bsptechs.main.bean.server;
 
 import com.bsptechs.main.bean.SUArrayList;
 import com.bsptechs.main.bean.ui.table.SUTableColumn;
+import java.io.Serializable;
 import java.util.Objects;
 import lombok.Data;
 
@@ -15,12 +16,13 @@ import lombok.Data;
  * @author sarkhanrasullu
  */
 @Data
-public class SUTableBean extends SUAbstractServerBean{
+public class SUTableBean extends SUAbstractServerBean implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private String name;
     private SUDatabaseBean database;
-    
-    public SUTableBean(String name, SUDatabaseBean database){
+
+    public SUTableBean(String name, SUDatabaseBean database) {
         this.name = name;
         this.database = database;
     }
@@ -49,6 +51,5 @@ public class SUTableBean extends SUAbstractServerBean{
         }
         return true;
     }
-    
-    
+
 }

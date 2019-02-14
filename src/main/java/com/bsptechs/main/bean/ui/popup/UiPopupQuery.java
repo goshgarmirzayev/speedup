@@ -12,11 +12,11 @@ import com.bsptechs.main.bean.server.SUConnectionBean;
 import com.bsptechs.main.bean.server.SUQueryBean;
 import com.bsptechs.main.bean.ui.tree.server.SUAbstractServerTreeNode;
 import com.bsptechs.main.bean.ui.tree.server.SUQueryTreeNode;
-import com.bsptechs.main.bean.ui.tree.server.bundle.SUConnectionBundleTreeNode;
-import com.bsptechs.main.bean.ui.tree.server.bundle.SUQueryBundleTreeNode;
-import com.bsptechs.main.util.LogUtil;
-import java.util.ArrayList;
+import com.bsptechs.main.popup.ClipBoard.MyClipBoard;
+import com.bsptechs.main.util.FileUtility;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
  */
 public class UiPopupQuery extends UiPopupAbstract {
 
-    private SUQueryBean selectedQuery = Main.instance().getConnectionTree().getSelectedQueryNode().getQuery();
+    private static final SUQueryBean selectedQuery = Main.instance().getConnectionTree().getSelectedQueryNode().getQuery();
 
     public UiPopupQuery() {
         addMenuItem("Design Query", () -> {
@@ -43,7 +43,12 @@ public class UiPopupQuery extends UiPopupAbstract {
 
         });
         addMenuItem("Copy", () -> {
+            try {
+                copyQuery();
 
+            } catch (Exception ex) {
+                Logger.getLogger(UiPopupQuery.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
         addMenuItem("Rename", () -> {
             renameQuery();
@@ -66,14 +71,18 @@ public class UiPopupQuery extends UiPopupAbstract {
     private SUAbstractServerTreeNode getSelectedQueryNode() {
         return (SUQueryTreeNode) getSelectedElement();
     }
-    
-    String designedQuery;
-    public void setDesignedQuery(String designedQuery) {
-        this.designedQuery = designedQuery;
+    private static boolean isDesigning = false;
+
+    public static boolean getIsDesigning() {
+        return isDesigning;
     }
 
     private void designQuery() {
+        isDesigning = true;
         Main.instance().prepareNewQuery(selectedQuery.getQuery(), false);
+    }
+
+    public static void saveDesignedQuery(String designedQuery) {
         SUArrayList<SUConnectionBean> connectionList = Main.instance()
                 .getConnectionTree()
                 .getConnectionBeans();
@@ -85,6 +94,8 @@ public class UiPopupQuery extends UiPopupAbstract {
         List<SUQueryBean> oldQueries = selectedConnection.getQueries();
         oldQueries.remove(selectedQuery);
         selectedQuery.setQuery(designedQuery);
+        oldQueries.add(selectedQuery);
+        Config.instance().saveConfig();
     }
 
     private void newQuery() {
@@ -92,7 +103,7 @@ public class UiPopupQuery extends UiPopupAbstract {
     }
 
     private void deleteQuery() {
-        //JOptionPane elave etmek
+        //JOptionPane elave etmek qalib
         SUArrayList<SUConnectionBean> connectionList = Main.instance()
                 .getConnectionTree()
                 .getConnectionBeans();
@@ -107,7 +118,6 @@ public class UiPopupQuery extends UiPopupAbstract {
         connectionList.add(selectedConnection);
         Config.instance().setConnectionBeans(connectionList);
         Config.instance().saveConfig();
-        Main.instance().getConnectionTree().getSelectedQueryNode().fireObjectsTab();
     }
 
     private void renameQuery() {
@@ -136,5 +146,9 @@ public class UiPopupQuery extends UiPopupAbstract {
         connectionList.add(selectedConnection);
         Config.instance().saveConfig();
         Config.instance().setConnectionBeans(connectionList);
+    }
+
+    private void copyQuery() throws Exception {
+        FileUtility.writeObjectToFile(selectedQuery, "forCopy.copy");
     }
 }

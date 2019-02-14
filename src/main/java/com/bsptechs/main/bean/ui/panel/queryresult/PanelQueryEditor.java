@@ -10,6 +10,7 @@ import com.bsptechs.main.bean.server.SUQueryBean;
 import com.bsptechs.main.bean.ui.frame.SetQueryLocation;
 import com.bsptechs.main.bean.server.SUConnectionBean;
 import com.bsptechs.main.bean.server.SUDatabaseBean;
+import com.bsptechs.main.bean.ui.popup.UiPopupQuery;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import com.bsptechs.main.dao.inter.DatabaseDAOInter;
 import com.bsptechs.main.util.ImageUtil;
@@ -480,9 +481,13 @@ public class PanelQueryEditor extends javax.swing.JPanel {
     }//GEN-LAST:event_btnExportResultMouseEntered
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        SetQueryLocation queryLocation = new SetQueryLocation();
-        queryLocation.setQueryBody(txtQuery.getText());
-        queryLocation.setVisible(true);
+        if (UiPopupQuery.getIsDesigning()) {
+            UiPopupQuery.saveDesignedQuery(txtQuery.getText());
+        } else {
+            SetQueryLocation queryLocation = new SetQueryLocation();
+            queryLocation.setQueryBody(txtQuery.getText());
+            queryLocation.setVisible(true);
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     public SUDatabaseBean getSelectedDatabase() {

@@ -25,14 +25,15 @@ import com.bsptechs.main.bean.ui.tree.server.SUAbstractServerTreeNode;
 import com.bsptechs.main.bean.ui.tree.server.SUTableTreeNode;
 import com.bsptechs.main.bean.ui.tree.server.bundle.SUAbstractBundleTreeNode;
 import com.bsptechs.main.bean.ui.tree.server.bundle.SUQueryBundleTreeNode;
+import com.bsptechs.main.util.FileUtility;
 import com.bsptechs.main.util.ImageUtil;
 import javax.swing.JTabbedPane;
 import lombok.SneakyThrows;
 
 public class Main extends javax.swing.JFrame {
-
+    
     SUConnectionBundleTreeNode conn = null;
-
+    
     public Main() {
         initComponents();
         btnNewQuery.setEnabled(false);
@@ -40,19 +41,19 @@ public class Main extends javax.swing.JFrame {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         setIcons();
     }
-
+    
     public PanelUiElementInformation getInformationPanel() {
         return (PanelUiElementInformation) pnlUiElementInformation;
     }
-
+    
     public PanelObjectMain getObjectTab() {
         return tabObjects;
     }
-
+    
     public JTabbedPane getTabbedPaneCenter() {
         return tabbedPaneCenter;
     }
-
+    
     public void setIcons() {
         btnNewConnection.setIcon(ImageUtil.getIcon("mainframe/connection.png"));
         btnTable.setIcon(ImageUtil.getIcon("mainframe/table.png"));
@@ -66,18 +67,18 @@ public class Main extends javax.swing.JFrame {
         btnModel.setIcon(ImageUtil.getIcon("mainframe/model.png"));
         btnNewQuery.setIcon(ImageUtil.getIcon("mainframe/newquery.png"));
     }
-
+    
     public void refreshNewQuery() {
         boolean found = getConnectionTree().hasAnyActiveConnection();
         btnNewQuery.setEnabled(found);
         menuNewQuery.setEnabled(found);
     }
-
+    
     public void prepare() throws Exception {
         Config.initialize();
         getConnectionTree().addConnectionNodes(Config.getConnectionBeans());
     }
-
+    
     public SUServerTree getConnectionTree() {
         return (SUServerTree) connectionTree;
     }
@@ -137,6 +138,11 @@ public class Main extends javax.swing.JFrame {
         jMenu7 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         pnlMainTop.setPreferredSize(new java.awt.Dimension(1050, 61));
 
@@ -806,40 +812,44 @@ public class Main extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_menuDataTransferActionPerformed
-
+    
 
     private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
         Util.backUpDb();        // TODO add your handling code here:
     }//GEN-LAST:event_btnBackupActionPerformed
 
     private void btnQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQueryActionPerformed
-
+        
         SUArrayList<SUAbstractButton> list = new SUArrayList<>();
         list.add((SUAbstractButton) new SUObjectActionButton("mainframe/query.png", "Design Query", new PanelObjectMain()));
         list.add((SUAbstractButton) new SUObjectActionButton("mainframe/query.png", "New Query", new PanelObjectMain()));
         list.add((SUAbstractButton) new SUObjectActionButton("mainframe/query.png", " Delete Query", new PanelObjectMain()));
         tabObjects.addAllButton(list);
-        tabObjects.revalidate();
-
-
+        PanelObjectMain tab = Main.instance().getObjectTab();
+        tab.refresh(Main.instance().getConnectionTree().getSelectedServerTreeNode());
+        
     }//GEN-LAST:event_btnQueryActionPerformed
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        FileUtility.writeObjectToFile(null, "forCopy.copy");
+    }//GEN-LAST:event_formWindowClosing
+    
     @SneakyThrows
     public PanelQueryEditor prepareNewQuery(String queryStr, boolean run) {
         SUServerTree tree = getConnectionTree();
         SUTableTreeNode table = tree.getSelectedTableNode();
         SUConnectionBean conn = table != null ? table.getTable().getDatabase().getConnection() : tree.getCurrentConnectionNode().getConnection();
         SUDatabaseBean db = table != null ? table.getTable().getDatabase() : tree.getCurrentDatabaseNode().getDatabase();
-
+        
         PanelQueryEditor panel = new PanelQueryEditor(conn, db, queryStr);
         Util.addPanelToTab(tabbedPaneCenter, panel, "Query");
         if (run) {
             panel.runQuery();
         }
-
+        
         return panel;
     }
-
+    
     private void btnNewQueryActionPerformed(java.awt.event.ActionEvent evt) {
         prepareNewQuery(null, false);
     }
@@ -848,11 +858,11 @@ public class Main extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     private static Main main = null;
-
+    
     public static Main instance() {
         return main;
     }
-
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -864,21 +874,21 @@ public class Main extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
-
+                    
                 }
             }
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(Main.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (InstantiationException ex) {
             java.util.logging.Logger.getLogger(Main.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(Main.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Main.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
