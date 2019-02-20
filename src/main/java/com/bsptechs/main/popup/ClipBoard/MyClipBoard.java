@@ -18,14 +18,14 @@ import java.io.IOException;
  */
 public class MyClipBoard {
 
-    public static void copyTableNameClipBoard(String tblName) {
+    public static void copyClipBoard(String info) {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Clipboard clipboard = toolkit.getSystemClipboard();
-        StringSelection strSel = new StringSelection(tblName);
+        StringSelection strSel = new StringSelection(info);
         clipboard.setContents(strSel, null);
     }
 
-    public static String readTblNameClipBoard() throws UnsupportedFlavorException, IOException {
+    public static String readClipBoard() throws UnsupportedFlavorException, IOException {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Clipboard clipboard = toolkit.getSystemClipboard();
         String result = (String) clipboard.getData(DataFlavor.stringFlavor);

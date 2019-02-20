@@ -57,6 +57,10 @@ public class SUServerTree extends SUAbstractTree {
         return getSelectedCustomTreeNodeGeneric(SUTableTreeNode.class);
     }
 
+    public SUQueryTreeNode getSelectedQueryNode() {
+        return getSelectedCustomTreeNodeGeneric(SUQueryTreeNode.class);
+    }
+
     public SUConnectionBundleTreeNode getSelectedConnectionNode() {
         return getSelectedCustomTreeNodeGeneric(SUConnectionBundleTreeNode.class);
     }
@@ -136,7 +140,7 @@ public class SUServerTree extends SUAbstractTree {
                 } else {
                     element.onClick();
                 }
-                
+
                 element.fireObjectsTab();
 
                 if (MouseUtil.isLeftClicked(evt)) {

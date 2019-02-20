@@ -10,6 +10,7 @@ import com.bsptechs.main.bean.server.SUQueryBean;
 import com.bsptechs.main.bean.ui.frame.SetQueryLocation;
 import com.bsptechs.main.bean.server.SUConnectionBean;
 import com.bsptechs.main.bean.server.SUDatabaseBean;
+import com.bsptechs.main.bean.ui.popup.UiPopupQuery;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import com.bsptechs.main.dao.inter.DatabaseDAOInter;
 import com.bsptechs.main.util.ImageUtil;
@@ -21,23 +22,25 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import com.bsptechs.main.util.LogUtil;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author sarkhanrasullu
  */
 public class PanelQueryEditor extends javax.swing.JPanel {
-    
+
     private static final DatabaseDAOInter db = new DatabaseDAOImpl();
     private static PanelQueryEditor panelQuery = null;
-    
+
     public PanelQueryEditor(SUConnectionBean connection, SUDatabaseBean database, String queryStr) throws ClassNotFoundException, SQLException {
         initComponents();
         preparePanel(connection, database);
         txtQuery.setText(queryStr);
         setIcon();
     }
-    
+
     public void setIcon() {
         btnSave.setIcon(ImageUtil.getIconforQueryPanel("querypanel/save.png"));
         btnQueryBuilder.setIcon(ImageUtil.getIconforQueryPanel("querypanel/querybuilder.png"));
@@ -49,30 +52,30 @@ public class PanelQueryEditor extends javax.swing.JPanel {
         btnstop.setIcon(ImageUtil.getIconforQueryPanel("querypanel/stop.png"));
         btnexplain.setIcon(ImageUtil.getIconforQueryPanel("querypanel/explain-.png"));
     }
-    
+
     public final void preparePanel(SUConnectionBean connection, SUDatabaseBean database) {
 //        pnlResult.setVisible(false);
         prepareConnectionCombobox(connection);
         prepareDatabasesCombobox(connection, database);
     }
-    
+
     public void prepareConnectionCombobox(SUConnectionBean connection) {
         cbConnections.removeAllItems();
         List<SUConnectionBean> list = Main.instance().getConnectionTree().getConnectionBeans();
         if (list.size() == 0) {
             return;
         }
-        
+
         for (int i = 0; i < list.size(); i++) {
             cbConnections.addItem(list.get(i));
         }
-        
+
         if (connection == null) {
             connection = list.get(0);
         }
         cbConnections.setSelectedItem(connection);
     }
-    
+
     public void prepareDatabasesCombobox(SUConnectionBean connection, SUDatabaseBean database) {
         if (connection == null) {
             return;
@@ -88,15 +91,15 @@ public class PanelQueryEditor extends javax.swing.JPanel {
         }
         cbDatabases.setSelectedItem(database);
     }
-    
+
     public void btnenter(JButton btn) {
         btn.setBorder(BorderFactory.createBevelBorder(1, Color.lightGray, Color.white));
     }
-    
+
     public void btnexit(JButton btn) {
         btn.setBorder(null);
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -458,6 +461,7 @@ public class PanelQueryEditor extends javax.swing.JPanel {
 
     private void btnTextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTextMouseExited
         btnexit(btnText);
+
     }//GEN-LAST:event_btnTextMouseExited
 
     private void btnTextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTextMouseEntered
@@ -477,24 +481,20 @@ public class PanelQueryEditor extends javax.swing.JPanel {
     }//GEN-LAST:event_btnExportResultMouseEntered
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        SetQueryLocation queryLocation = new SetQueryLocation();
-        queryLocation.setVisible(true);
-        queryLocation.setQueryBody(txtQuery.getText());
-
-        //        String query = txtQuery.getText();
-        //        SUDatabaseBean database=getSelectedDatabase();
-        //        SUConnectionBean connection=Main.instance().getConnectionTree().getCurrentConnectionNode().getConnection();
-        //        SUQueryBean savedQuery=new SUQueryBean(connection,database, query,"SecondQuery");
-        //        FileUtility.writeObjectToFile(savedQuery, "queries.txt");
-
+        if (UiPopupQuery.getIsDesigning()) {
+            UiPopupQuery.saveDesignedQuery(txtQuery.getText());
+        } else {
+            SetQueryLocation queryLocation = new SetQueryLocation();
+            queryLocation.setQueryBody(txtQuery.getText());
+            queryLocation.setVisible(true);
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
-    
+
     public SUDatabaseBean getSelectedDatabase() {
         Object obj = cbDatabases.getSelectedItem();
-        
         return (SUDatabaseBean) obj;
     }
-    
+
     public SUConnectionBean getSelectedConnection() {
         return (SUConnectionBean) cbConnections.getSelectedItem();
     }
@@ -505,7 +505,7 @@ public class PanelQueryEditor extends javax.swing.JPanel {
     public PanelQueryResult getPanelQueryResult() {
         return (PanelQueryResult) pnlQueryResult;
     }
-    
+
     public void runQuery() {
         String queryStr = txtQuery.getText();
         SUConnectionBean connection = getSelectedConnection();

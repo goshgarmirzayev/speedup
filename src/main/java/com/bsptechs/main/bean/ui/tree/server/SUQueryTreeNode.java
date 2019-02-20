@@ -11,7 +11,6 @@ import com.bsptechs.main.bean.server.SUQueryBean;
 import com.bsptechs.main.bean.ui.button.SUObjectActionButton;
 import com.bsptechs.main.bean.ui.panel.PanelObjectMain;
 import com.bsptechs.main.bean.ui.popup.UiPopupQuery;
-import com.bsptechs.main.bean.ui.popup.UiPopupTable;
 import javax.swing.JPopupMenu;
 import lombok.Data;
 

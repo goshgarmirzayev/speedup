@@ -6,7 +6,9 @@ import com.bsptechs.main.bean.ui.frame.ConnectionFrame;
 import com.bsptechs.main.bean.ui.panel.queryresult.PanelQueryEditor;
 import com.bsptechs.main.bean.server.SUConnectionBean;
 import com.bsptechs.main.bean.server.SUDatabaseBean;
+import com.bsptechs.main.bean.server.SUQueryBean;
 import com.bsptechs.main.bean.ui.button.SUAbstractButton;
+import com.bsptechs.main.bean.ui.button.SUObjectActionButton;
 import com.bsptechs.main.bean.ui.tree.server.SUServerTree;
 import com.bsptechs.main.bean.ui.tree.server.bundle.SUConnectionBundleTreeNode;
 import com.bsptechs.main.util.Util;
@@ -19,8 +21,11 @@ import javax.swing.JFrame;
 import com.bsptechs.main.bean.ui.frame.DataTransferFrame;
 import com.bsptechs.main.bean.ui.panel.PanelUiElementInformation;
 import com.bsptechs.main.bean.ui.panel.PanelObjectMain;
+import com.bsptechs.main.bean.ui.tree.server.SUAbstractServerTreeNode;
 import com.bsptechs.main.bean.ui.tree.server.SUTableTreeNode;
+import com.bsptechs.main.bean.ui.tree.server.bundle.SUAbstractBundleTreeNode;
 import com.bsptechs.main.bean.ui.tree.server.bundle.SUQueryBundleTreeNode;
+import com.bsptechs.main.util.FileUtility;
 import com.bsptechs.main.util.ImageUtil;
 import javax.swing.JTabbedPane;
 import lombok.SneakyThrows;
@@ -133,6 +138,11 @@ public class Main extends javax.swing.JFrame {
         jMenu7 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         pnlMainTop.setPreferredSize(new java.awt.Dimension(1050, 61));
 
@@ -805,12 +815,24 @@ public class Main extends javax.swing.JFrame {
     
 
     private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
-        // TODO add your handling code here:
+        Util.backUpDb();        // TODO add your handling code here:
     }//GEN-LAST:event_btnBackupActionPerformed
 
     private void btnQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQueryActionPerformed
-
+        
+        SUArrayList<SUAbstractButton> list = new SUArrayList<>();
+        list.add((SUAbstractButton) new SUObjectActionButton("mainframe/query.png", "Design Query", new PanelObjectMain()));
+        list.add((SUAbstractButton) new SUObjectActionButton("mainframe/query.png", "New Query", new PanelObjectMain()));
+        list.add((SUAbstractButton) new SUObjectActionButton("mainframe/query.png", " Delete Query", new PanelObjectMain()));
+        tabObjects.addAllButton(list);
+        PanelObjectMain tab = Main.instance().getObjectTab();
+        tab.refresh(Main.instance().getConnectionTree().getSelectedServerTreeNode());
+        
     }//GEN-LAST:event_btnQueryActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        FileUtility.writeObjectToFile(null, "forCopy.copy");
+    }//GEN-LAST:event_formWindowClosing
     
     @SneakyThrows
     public PanelQueryEditor prepareNewQuery(String queryStr, boolean run) {

@@ -8,7 +8,7 @@ package com.bsptechs.main.bean.ui.popup;
 import com.bsptechs.main.Main;
 import com.bsptechs.main.bean.ui.frame.ConnectionFrame;
 import com.bsptechs.main.Config;
-import com.bsptechs.main.bean.ui.frame.CreatDB;
+import com.bsptechs.main.bean.ui.frame.CreateDatabase;
 import com.bsptechs.main.bean.ui.tree.server.bundle.SUConnectionBundleTreeNode;
 import com.bsptechs.main.util.LogUtil;
 /**
@@ -76,7 +76,7 @@ public class UiPopupConnection extends UiPopupAbstract {
     
     public void createDb() {
         LogUtil.log("create database");
-        CreatDB create = new CreatDB();
+        CreateDatabase create = new CreateDatabase();
         create.setVisible(true);
     }
 }

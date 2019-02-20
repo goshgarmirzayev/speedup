@@ -9,6 +9,7 @@ import com.bsptechs.main.bean.server.SUQueryBean;
 import com.bsptechs.main.bean.ui.button.SUObjectActionButton;
 import com.bsptechs.main.bean.ui.panel.PanelObjectMain;
 import com.bsptechs.main.bean.ui.popup.UiPopupQuery;
+import com.bsptechs.main.bean.ui.popup.UiPopupQueryBundle;
 import com.bsptechs.main.bean.ui.tree.server.SUQueryTreeNode;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import com.bsptechs.main.dao.inter.DatabaseDAOInter;
@@ -57,7 +58,7 @@ public class SUQueryBundleTreeNode extends SUAbstractBundleTreeNode<SUQueryBean>
 
     @Override
     public JPopupMenu getPopup() {
-        return new UiPopupQuery();
+        return new UiPopupQueryBundle();
     }
 
     @Override
@@ -81,7 +82,11 @@ public class SUQueryBundleTreeNode extends SUAbstractBundleTreeNode<SUQueryBean>
 
     @Override
     public void fillData() {
-
+        SUDatabaseBean selectedDatabase = Main.instance()
+                .getConnectionTree()
+                .getCurrentDatabaseNode()
+                .getDatabase();
+        List<SUQueryBean> sortedQueries = new ArrayList<>();
         if (Main.instance()
                 .getConnectionTree()
                 .getCurrentConnectionNode()
@@ -93,19 +98,17 @@ public class SUQueryBundleTreeNode extends SUAbstractBundleTreeNode<SUQueryBean>
                     .getConnection()
                     .getQueries();
             removeAllChildren();
-            SUDatabaseBean selectedDatabase = Main.instance()
-                    .getConnectionTree()
-                    .getCurrentDatabaseNode()
-                    .getDatabase();
-            System.out.println("selectedDatabase " + selectedDatabase);
-            List<SUQueryBean> sortedQueries = new ArrayList<>();
+
             for (SUQueryBean query : queries) {
                 if (selectedDatabase.equals(query.getDatabase())) {
                     sortedQueries.add(query);
                 }
+                if (query.getDatabase() == null) {
+                    sortedQueries.add(query);
+                }
             }
-            addQueries(sortedQueries);
         }
+        addQueries(sortedQueries);
     }
 
     @Override
