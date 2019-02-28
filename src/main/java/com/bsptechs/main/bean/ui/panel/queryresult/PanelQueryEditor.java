@@ -10,6 +10,7 @@ import com.bsptechs.main.bean.server.SUQueryBean;
 import com.bsptechs.main.bean.ui.frame.SetQueryLocation;
 import com.bsptechs.main.bean.server.SUConnectionBean;
 import com.bsptechs.main.bean.server.SUDatabaseBean;
+import com.bsptechs.main.bean.ui.frame.AutoCompleteFrame;
 import com.bsptechs.main.bean.ui.popup.UiPopupQuery;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import com.bsptechs.main.dao.inter.DatabaseDAOInter;
@@ -22,8 +23,10 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import com.bsptechs.main.util.LogUtil;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.bsptechs.main.util.Util;
+import java.awt.event.KeyEvent;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 
 /**
  *
@@ -132,6 +135,14 @@ public class PanelQueryEditor extends javax.swing.JPanel {
         txtQuery.setRows(5);
         txtQuery.setMinimumSize(new java.awt.Dimension(0, 0));
         txtQuery.setPreferredSize(new java.awt.Dimension(0, 0));
+        txtQuery.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtQueryKeyPressed(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtQueryKeyTyped(evt);
+            }
+        });
         jScrollPane1.setViewportView(txtQuery);
 
         cbConnections.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -490,6 +501,21 @@ public class PanelQueryEditor extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 
+    private void txtQueryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQueryKeyPressed
+        if ((evt.getKeyCode() == KeyEvent.VK_SPACE) && ((evt.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+            String typedWord = Util.getCurrentlyTypedWord(txtQuery.getText());
+            AutoCompleteFrame.typedWord = typedWord;
+            AutoCompleteFrame.selectedConnection = (SUConnectionBean) cbConnections.getSelectedItem();
+            new AutoCompleteFrame().setVisible(true);
+        }  
+        new AutoCompleteFrame().setVisible(false);
+        
+    }//GEN-LAST:event_txtQueryKeyPressed
+
+    private void txtQueryKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQueryKeyTyped
+
+
+    }//GEN-LAST:event_txtQueryKeyTyped
     public SUDatabaseBean getSelectedDatabase() {
         Object obj = cbDatabases.getSelectedItem();
         return (SUDatabaseBean) obj;

@@ -2,6 +2,7 @@ package com.bsptechs.main.dao.impl;
 
 import com.bsptechs.main.Config;
 import com.bsptechs.main.Main;
+import com.bsptechs.main.bean.AutoComplete;
 import com.bsptechs.main.bean.Charset;
 import com.bsptechs.main.bean.Collation;
 import com.bsptechs.main.bean.SUArrayList;
@@ -25,6 +26,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import com.bsptechs.main.util.LogUtil;
 import java.sql.SQLException;
+import java.util.LinkedHashSet;
 import java.util.Vector;
 
 /**
@@ -509,5 +511,40 @@ public class DatabaseDAOImpl extends AbstractDatabase implements DatabaseDAOInte
         Config.instance().setConnectionBeans(connectionList);
         Config.instance().saveConfig();
         return true;
-     }
+    }
+
+    @SneakyThrows
+    @Override
+    public LinkedHashSet<AutoComplete> getAllKeyWords(SUConnectionBean conn) {
+        Connection connection = connect(conn);
+        Statement stmt1 = connection.createStatement();
+        stmt1.executeQuery("  SELECT TABLE_SCHEMA ,\n"
+                + "       TABLE_NAME ,\n"
+                + "       COLUMN_NAME ,\n"
+                + "       DATA_TYPE \n"
+                + "       \n"
+                + "FROM   INFORMATION_SCHEMA.COLUMNS");
+        ResultSet rs1 = stmt1.getResultSet();
+        Statement stmt2 = connection.createStatement();
+        LinkedHashSet<AutoComplete> words = new LinkedHashSet<>();
+        while (rs1.next()) {
+            String databases = rs1.getString("TABLE_SCHEMA");
+            String tables = rs1.getString("TABLE_NAME");
+            String columns = rs1.getString("COLUMN_NAME");
+            String dataType = rs1.getString("DATA_TYPE");
+            words.add(new AutoComplete(databases.toLowerCase(), "database", "/icons/database.png"));
+            words.add(new AutoComplete(tables.toLowerCase(), "table", "/icons/table.png"));
+            words.add(new AutoComplete(columns.toLowerCase(), "columns", null));
+            words.add(new AutoComplete(dataType.toLowerCase(), "type", null));
+        }
+         stmt2.executeQuery("select * from mysql.help_keyword");
+        ResultSet rs2 = stmt2.getResultSet();
+        rs2 = stmt2.getResultSet();
+
+        while (rs2.next()) {
+            String helpKeywords = rs2.getString("name");
+            words.add(new AutoComplete(helpKeywords.toLowerCase(), "key word", null));
+        }
+        return words;
+    }
 }

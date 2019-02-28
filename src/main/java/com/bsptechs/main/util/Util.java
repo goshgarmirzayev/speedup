@@ -87,4 +87,20 @@ public class Util {
         return false;
     }
 
+    public static String getCurrentlyTypedWord(String getText) {//get newest word after last white spaceif any or the first word if no white spaces
+        String text = getText;
+        String wordBeingTyped = "";
+        if (text.contains(" ")) {
+            int tmp = text.lastIndexOf(" ");
+            if (tmp >= 1) {
+                tmp=1;
+                wordBeingTyped = text.substring(text.lastIndexOf(" "));
+            }
+        } else {
+            wordBeingTyped = text;
+        }
+        return wordBeingTyped.trim();
+    }
+    
+
 }
