@@ -6,11 +6,12 @@
 package com.bsptechs.main.bean.ui.panel.queryresult;
 
 import com.bsptechs.main.Main;
+import com.bsptechs.main.bean.AutoComplete;
 import com.bsptechs.main.bean.server.SUQueryBean;
-import com.bsptechs.main.bean.ui.frame.SetQueryLocation;
 import com.bsptechs.main.bean.server.SUConnectionBean;
 import com.bsptechs.main.bean.server.SUDatabaseBean;
-import com.bsptechs.main.bean.ui.frame.AutoCompleteFrame;
+import com.bsptechs.main.bean.server.SUTableBean;
+import com.bsptechs.main.bean.ui.frame.SetQueryLocation;
 import com.bsptechs.main.bean.ui.popup.UiPopupQuery;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import com.bsptechs.main.dao.inter.DatabaseDAOInter;
@@ -23,10 +24,20 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import com.bsptechs.main.util.LogUtil;
-import com.bsptechs.main.util.Util;
+import java.awt.BorderLayout;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
 import javax.swing.JList;
-import javax.swing.JScrollPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
 
 /**
  *
@@ -36,12 +47,14 @@ public class PanelQueryEditor extends javax.swing.JPanel {
 
     private static final DatabaseDAOInter db = new DatabaseDAOImpl();
     private static PanelQueryEditor panelQuery = null;
+    private LinkedHashSet<AutoComplete> wordlist;
 
     public PanelQueryEditor(SUConnectionBean connection, SUDatabaseBean database, String queryStr) throws ClassNotFoundException, SQLException {
         initComponents();
         preparePanel(connection, database);
         txtQuery.setText(queryStr);
         setIcon();
+        fillWordlist();
     }
 
     public void setIcon() {
@@ -54,6 +67,221 @@ public class PanelQueryEditor extends javax.swing.JPanel {
         btnRun.setIcon(ImageUtil.getIconforQueryPanel("querypanel/play-arrow.png"));
         btnstop.setIcon(ImageUtil.getIconforQueryPanel("querypanel/stop.png"));
         btnexplain.setIcon(ImageUtil.getIconforQueryPanel("querypanel/explain-.png"));
+    }
+
+    public void fillWordlist() {
+        wordlist = db.getAllKeyWords(getSelectedConnection());
+
+    }
+    
+
+    public class SuggestionPanel {
+
+        private JList list;
+        private JPopupMenu popupMenu;
+        private String subWord;
+        private final int insertionPosition;
+
+        public SuggestionPanel(JTextArea textarea, int position, String subWord, Point location) {
+            this.insertionPosition = position;
+            this.subWord = subWord;
+            popupMenu = new JPopupMenu();
+            popupMenu.removeAll();
+            popupMenu.setOpaque(false);
+            popupMenu.setBorder(null);
+            popupMenu.add(list = createSuggestionList(position, subWord), BorderLayout.CENTER);
+            popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0) + location.y);
+        }
+
+        public void hide() {
+            popupMenu.setVisible(false);
+            if (suggestion == this) {
+                suggestion = null;
+            }
+        }
+
+        private JList createSuggestionList(final int position, final String subWord) {
+            Object[] data = null;
+            List<AutoComplete> result = null;
+            if (subWord.endsWith(".")) {
+                List<SUDatabaseBean> databases = getSelectedConnection().getDatabases();
+                SUDatabaseBean typedDatabase = null;
+                for (int i = 0; i < databases.size(); i++) {
+                    if (databases.get(i).getName().startsWith(subWord)) {
+                        typedDatabase = databases.get(i);
+                    }
+
+                }
+                List<SUTableBean> tables = db.getAllTables(typedDatabase);
+                System.out.println(tables);
+                data = new Object[tables.size()];
+                for (int i = 0; i < tables.size(); i++) {
+                    data[i] = tables.get(i).getName();
+                }
+            } else {
+                result = wordlist.stream()
+                        .filter(item -> item.getName().startsWith(subWord))
+                        .collect(Collectors.toList());
+                data = new Object[result.size()];
+                for (int i = 0; i < result.size(); i++) {
+                    data[i] = result.get(i).getName();
+                }
+            }
+            JList list = new JList(data);
+            list.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
+            list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            list.setSelectedIndex(0);
+            list.setSize(100, 300);
+            list.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        insertSelection();
+                    }
+                }
+            });
+            return list;
+        }
+
+        public boolean insertSelection() {
+            if (list.getSelectedValue() != null) {
+                try {
+                    final String selectedSuggestion = ((String) list.getSelectedValue()).substring(subWord.length());
+                    txtQuery.getDocument().insertString(insertionPosition, selectedSuggestion, null);
+                    return true;
+                } catch (BadLocationException e1) {
+                    e1.printStackTrace();
+                }
+                hideSuggestion();
+            }
+            return false;
+        }
+
+        public void moveUp() {
+            int index = Math.min(list.getSelectedIndex() - 1, 0);
+            selectIndex(index);
+        }
+
+        public void moveDown() {
+            int index = Math.min(list.getSelectedIndex() + 1, list.getModel().getSize() - 1);
+            selectIndex(index);
+        }
+
+        private void selectIndex(int index) {
+            final int position = txtQuery.getCaretPosition();
+            list.setSelectedIndex(index);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    txtQuery.setCaretPosition(position);
+                }
+            ;
+        }
+
+    
+    );
+        }
+    }
+
+    private SuggestionPanel suggestion;
+
+    protected void showSuggestionLater() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                showSuggestion();
+            }
+
+        });
+    }
+
+    protected void showSuggestion() {
+        hideSuggestion();
+        final int position = txtQuery.getCaretPosition();
+        Point location;
+        try {
+            location = txtQuery.modelToView(position).getLocation();
+        } catch (BadLocationException e2) {
+            e2.printStackTrace();
+            return;
+        }
+        String text = txtQuery.getText();
+        int start = Math.max(0, position - 1);
+        while (start > 0) {
+            if (!Character.isWhitespace(text.charAt(start))) {
+                start--;
+            } else {
+                start++;
+                break;
+            }
+        }
+        if (start > position) {
+            return;
+        }
+        final String subWord = text.substring(start, position);
+        if (subWord.length() < 2) {
+            return;
+        }
+        suggestion = new SuggestionPanel(txtQuery, position, subWord, location);
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                txtQuery.requestFocusInWindow();
+            }
+        });
+    }
+
+    private void hideSuggestion() {
+        if (suggestion != null) {
+            suggestion.hide();
+        }
+    }
+
+    protected void initUI() {
+        txtQuery.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    if (suggestion != null) {
+                        if (suggestion.insertSelection()) {
+                            e.consume();
+                            final int position = txtQuery.getCaretPosition();
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        txtQuery.getDocument().remove(position - 1, 1);
+                                    } catch (BadLocationException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_DOWN && suggestion != null) {
+                    suggestion.moveDown();
+                } else if (e.getKeyCode() == KeyEvent.VK_UP && suggestion != null) {
+                    suggestion.moveUp();
+                } else if (Character.isLetterOrDigit(e.getKeyChar())) {
+                    showSuggestionLater();
+                } else if (Character.isWhitespace(e.getKeyChar())) {
+                    hideSuggestion();
+                }
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+        });
+
     }
 
     public final void preparePanel(SUConnectionBean connection, SUDatabaseBean database) {
@@ -492,7 +720,8 @@ public class PanelQueryEditor extends javax.swing.JPanel {
     }//GEN-LAST:event_btnExportResultMouseEntered
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        if (UiPopupQuery.getIsDesigning()) {
+
+        if (UiPopupQuery.isDesigning) {
             UiPopupQuery.saveDesignedQuery(txtQuery.getText());
         } else {
             SetQueryLocation queryLocation = new SetQueryLocation();
@@ -501,21 +730,14 @@ public class PanelQueryEditor extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 
-    private void txtQueryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQueryKeyPressed
-        if ((evt.getKeyCode() == KeyEvent.VK_SPACE) && ((evt.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
-            String typedWord = Util.getCurrentlyTypedWord(txtQuery.getText());
-            AutoCompleteFrame.typedWord = typedWord;
-            AutoCompleteFrame.selectedConnection = (SUConnectionBean) cbConnections.getSelectedItem();
-            new AutoCompleteFrame().setVisible(true);
-        }  
-        new AutoCompleteFrame().setVisible(false);
-        
-    }//GEN-LAST:event_txtQueryKeyPressed
-
     private void txtQueryKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQueryKeyTyped
-
-
+        initUI();
     }//GEN-LAST:event_txtQueryKeyTyped
+
+    @SuppressWarnings("null")
+    private void txtQueryKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQueryKeyPressed
+
+    }//GEN-LAST:event_txtQueryKeyPressed
     public SUDatabaseBean getSelectedDatabase() {
         Object obj = cbDatabases.getSelectedItem();
         return (SUDatabaseBean) obj;

@@ -71,7 +71,7 @@ public class UiPopupQuery extends UiPopupAbstract {
     private SUAbstractServerTreeNode getSelectedQueryNode() {
         return (SUQueryTreeNode) getSelectedElement();
     }
-    private static boolean isDesigning = false;
+    public static boolean isDesigning = false;
 
     public static boolean getIsDesigning() {
         return isDesigning;
