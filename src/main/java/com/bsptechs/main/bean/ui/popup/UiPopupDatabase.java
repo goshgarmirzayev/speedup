@@ -11,11 +11,16 @@ import javax.swing.JList;
 import com.bsptechs.main.Config;
 import com.bsptechs.main.bean.server.SUConnectionBean;
 import com.bsptechs.main.bean.server.SUDatabaseBean;
+import com.bsptechs.main.bean.ui.panel.PanelNewTable;
+import com.bsptechs.main.bean.ui.panel.PanelObjectMain;
 import com.bsptechs.main.util.FileUtility;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import com.bsptechs.main.util.LogUtil;
+import com.bsptechs.main.util.Util;
+import javax.swing.JTabbedPane;
+
 /**
  *
  * @author sarkhanrasullu
@@ -39,6 +44,9 @@ public class UiPopupDatabase extends UiPopupAbstract {
 
         addMenuItem("Dump SQL file", () -> {
             dumpSQLFile();
+        });
+        addMenuItem("Create Table", () -> {
+            createTable();
         });
 
     }
@@ -82,4 +90,9 @@ public class UiPopupDatabase extends UiPopupAbstract {
         }
     }
 
+    private void createTable() {
+        JTabbedPane tab = Main.instance().getTabbedPaneCenter();
+        PanelNewTable tablePane = new PanelNewTable();
+        Util.addPanelToTab(tab, tablePane, "Create Table");
+    }
 }

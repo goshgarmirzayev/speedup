@@ -14,6 +14,7 @@ import com.bsptechs.main.bean.ui.panel.PanelUiElementInformation;
 import com.bsptechs.main.bean.ui.tree.SUAbstractTree;
 import com.bsptechs.main.bean.ui.tree.SUAbstractTreeNode;
 import com.bsptechs.main.bean.server.SUAbstractServerBean;
+import com.bsptechs.main.bean.ui.tree.server.bundle.SUQueryBundleTreeNode;
 import com.bsptechs.main.util.MouseUtil;
 import java.awt.event.MouseAdapter;
 import java.util.Enumeration;
@@ -30,6 +31,7 @@ public class SUServerTree extends SUAbstractTree {
 
     private SUConnectionBundleTreeNode currentConnectionNode = null;
     private SUDatabaseBundleTreeNode currentDatabaseNode = null;
+    private SUQueryBundleTreeNode currentQueryNode = null;
 
     public void addConnectionNode(SUConnectionBean connection) {
         LogUtil.log(connection);
@@ -76,7 +78,7 @@ public class SUServerTree extends SUAbstractTree {
         }
         return list;
     }
-
+  
     public void addConnectionNodes(List<SUConnectionBean> connections) {
         for (SUConnectionBean cnb : connections) {
             this.addCustomTreeNodeToRoot(new SUConnectionBundleTreeNode(this, cnb));
@@ -97,6 +99,14 @@ public class SUServerTree extends SUAbstractTree {
 
     public void setCurrentDatabaseNode(SUDatabaseBundleTreeNode currentDatabaseNode) {
         this.currentDatabaseNode = currentDatabaseNode;
+    }
+
+    public SUQueryBundleTreeNode getCurrentQueryNode() {
+        return currentQueryNode;
+    }
+
+    public void setCurrentQueryNode(SUQueryBundleTreeNode currentQueryNode) {
+        this.currentQueryNode = currentQueryNode;
     }
 
     public boolean hasAnyActiveConnection() {

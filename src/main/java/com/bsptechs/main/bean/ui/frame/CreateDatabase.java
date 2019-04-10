@@ -15,6 +15,7 @@ import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import java.util.List;
 import lombok.Data;
 import com.bsptechs.main.util.LogUtil;
+
 /**
  *
  * @author Goshgar
@@ -62,7 +63,15 @@ public class CreateDatabase extends javax.swing.JFrame {
         }
     }
 
-
+    private void generateSqlPreview() {
+        queryArea.setText("CREATE SCHEMA `"
+                + dbName.getText()
+                + "` DEFAULT CHARACTER SET "
+                + charsetCmbo.getSelectedItem()
+                + " COLLATE "
+                + collationCombo.getSelectedItem()
+                + ";");
+    }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -87,6 +96,12 @@ public class CreateDatabase extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
+            }
+        });
+
+        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPane1StateChanged(evt);
             }
         });
 
@@ -178,6 +193,7 @@ public class CreateDatabase extends javax.swing.JFrame {
         jTabbedPane1.addTab("Options", jPanel1);
 
         queryArea.setColumns(20);
+        queryArea.setFont(new java.awt.Font("Courier New", 0, 13)); // NOI18N
         queryArea.setRows(5);
         jScrollPane2.setViewportView(queryArea);
 
@@ -277,6 +293,10 @@ public class CreateDatabase extends javax.swing.JFrame {
     private void cancelBtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtn1ActionPerformed
         this.dispose();
     }//GEN-LAST:event_cancelBtn1ActionPerformed
+
+    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
+        generateSqlPreview();
+    }//GEN-LAST:event_jTabbedPane1StateChanged
 
     /**
      * @param args the command line arguments

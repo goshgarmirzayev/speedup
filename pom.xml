@@ -60,5 +60,15 @@
             <artifactId>swingx-autocomplete</artifactId>
             <version>1.6.7</version>
         </dependency>
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>derbyclient</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>derby</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

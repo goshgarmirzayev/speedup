@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
  */
 public class UiPopupQuery extends UiPopupAbstract {
 
-    private static final SUQueryBean selectedQuery = Main.instance().getConnectionTree().getSelectedQueryNode().getQuery();
+    private static final SUQueryBean selectedQuery = Main.instance().getConnectionTree().getCurrentQueryNode().getQuery();
 
     public UiPopupQuery() {
         addMenuItem("Design Query", () -> {
@@ -59,9 +59,6 @@ public class UiPopupQuery extends UiPopupAbstract {
         addMenuItem("Refresh", () -> {
 
         });
-        addMenuItem("Copy", () -> {
-
-        });
         addMenuItem("Object Information", () -> {
 
         });
@@ -80,6 +77,7 @@ public class UiPopupQuery extends UiPopupAbstract {
     private void designQuery() {
         isDesigning = true;
         Main.instance().prepareNewQuery(selectedQuery.getQuery(), false);
+        isDesigning = false;
     }
 
     public static void saveDesignedQuery(String designedQuery) {
@@ -96,6 +94,7 @@ public class UiPopupQuery extends UiPopupAbstract {
         selectedQuery.setQuery(designedQuery);
         oldQueries.add(selectedQuery);
         Config.instance().saveConfig();
+        isDesigning = false;
     }
 
     private void newQuery() {
