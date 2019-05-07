@@ -58,4 +58,6 @@ public interface DatabaseDAOInter {
     boolean saveQuery(SUConnectionBean c, SUQueryBean queryBean);
 
     public LinkedHashSet<AutoComplete> getAllKeyWords(SUConnectionBean conn);
+
+    public boolean createTable(SUDatabaseBean database, String sql);
 }

@@ -73,7 +73,6 @@ public class PanelQueryEditor extends javax.swing.JPanel {
         wordlist = db.getAllKeyWords(getSelectedConnection());
 
     }
-    
 
     public class SuggestionPanel {
 
@@ -243,22 +242,27 @@ public class PanelQueryEditor extends javax.swing.JPanel {
 
             @Override
             public void keyTyped(KeyEvent e) {
+                
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     if (suggestion != null) {
-                        if (suggestion.insertSelection()) {
-                            e.consume();
-                            final int position = txtQuery.getCaretPosition();
-                            SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        txtQuery.getDocument().remove(position - 1, 1);
-                                    } catch (BadLocationException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-                        }
+                        e.consume();
+                        suggestion.insertSelection();
+                        suggestion.hide();
+                        suggestion = null;
+//                        if (suggestion.insertSelection()) {
+//                            e.consume();
+//                            final int position = txtQuery.getCaretPosition();
+//                            SwingUtilities.invokeLater(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    try {
+//                                        txtQuery.getDocument().remove(position - 1, 1);
+//                                    } catch (BadLocationException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                 }
+//                            });
+//                        }
                     }
                 }
             }
@@ -720,10 +724,11 @@ public class PanelQueryEditor extends javax.swing.JPanel {
     }//GEN-LAST:event_btnExportResultMouseEntered
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-
+         LogUtil.log(UiPopupQuery.isDesigning);
         if (UiPopupQuery.isDesigning) {
             UiPopupQuery.saveDesignedQuery(txtQuery.getText());
-        } else {
+        }
+        if (!UiPopupQuery.isDesigning) {
             SetQueryLocation queryLocation = new SetQueryLocation();
             queryLocation.setQueryBody(txtQuery.getText());
             queryLocation.setVisible(true);

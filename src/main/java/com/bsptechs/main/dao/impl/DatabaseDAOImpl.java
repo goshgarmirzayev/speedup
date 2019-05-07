@@ -537,7 +537,7 @@ public class DatabaseDAOImpl extends AbstractDatabase implements DatabaseDAOInte
             words.add(new AutoComplete(columns.toLowerCase(), "columns", null));
             words.add(new AutoComplete(dataType.toLowerCase(), "type", null));
         }
-         stmt2.executeQuery("select * from mysql.help_keyword");
+        stmt2.executeQuery("select * from mysql.help_keyword");
         ResultSet rs2 = stmt2.getResultSet();
         rs2 = stmt2.getResultSet();
 
@@ -546,5 +546,14 @@ public class DatabaseDAOImpl extends AbstractDatabase implements DatabaseDAOInte
             words.add(new AutoComplete(helpKeywords.toLowerCase(), "key word", null));
         }
         return words;
+    }
+
+    @SneakyThrows
+    @Override
+    public boolean createTable(SUDatabaseBean database, String sql) {
+        Connection conn = connect(database.getConnection());
+        Statement stmt = conn.createStatement();
+        stmt.execute(sql);
+        return true;
     }
 }
