@@ -9,16 +9,15 @@ package com.bsptechs.main.bean.table.dataTypePanel;
  *
  * @author Goshgar
  */
-public class BlobFamilyPanel extends DataTypePanel {
+public class DefaultFamilyPanel extends DataTypePanel {
 
-    
-    public BlobFamilyPanel() {
-      
+    /**
+     * Creates new form DefaultFamilyPanel
+     */
+    public DefaultFamilyPanel() {
         initComponents();
     }
 
-    
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,31 +27,38 @@ public class BlobFamilyPanel extends DataTypePanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        txtKeyLength = new javax.swing.JTextField();
+        jComboBox1 = new javax.swing.JComboBox<>();
 
-        txtKeyLength.setEnabled(false);
+
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "", "NULL", "EMPTY STRING" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(txtKeyLength, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jComboBox1, 0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(txtKeyLength, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jComboBox1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
         );
+
     }// </editor-fold>//GEN-END:initComponents
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField txtKeyLength;
-    // End of variables declaration//GEN-END:variables
 
     @Override
     public String getQuery() {
-    String query="$NOT_NULL";
-    
-            return query;
+      String str="$NOT_NULL"; //To change body of generated methods, choose Tools | Templates.
+      return str;
     }
+
+    /**
+     * @param args the command line arguments
+     */
+    
+    
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> jComboBox1;
+    // End of variables declaration//GEN-END:variables
 }

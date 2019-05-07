@@ -14,18 +14,17 @@ import com.bsptechs.main.bean.ui.tree.server.SUAbstractServerTreeNode;
 import com.bsptechs.main.bean.ui.tree.server.SUQueryTreeNode;
 import com.bsptechs.main.popup.ClipBoard.MyClipBoard;
 import com.bsptechs.main.util.FileUtility;
+
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- *
  * @author Goshgar
  */
 public class UiPopupQuery extends UiPopupAbstract {
 
-    private static final SUQueryBean selectedQuery = Main.instance().getConnectionTree().getCurrentQueryNode().getQuery();
 
     public UiPopupQuery() {
         addMenuItem("Design Query", () -> {
@@ -34,11 +33,9 @@ public class UiPopupQuery extends UiPopupAbstract {
         addMenuItem("New Query", () -> {
             newQuery();
         });
-
         addMenuItem("Delete Query", () -> {
             deleteQuery();
         });
-
         addMenuItem("Export Wizard", () -> {
 
         });
@@ -60,7 +57,6 @@ public class UiPopupQuery extends UiPopupAbstract {
 
         });
         addMenuItem("Object Information", () -> {
-
         });
 
     }
@@ -68,19 +64,22 @@ public class UiPopupQuery extends UiPopupAbstract {
     private SUAbstractServerTreeNode getSelectedQueryNode() {
         return (SUQueryTreeNode) getSelectedElement();
     }
+
     public static boolean isDesigning = false;
 
-    public static boolean getIsDesigning() {
-        return isDesigning;
-    }
+//    public static boolean getIsDesigning() {
+//        return isDesigning;
+//    }
 
     private void designQuery() {
         isDesigning = true;
+        selectedQuery = Main.instance().getConnectionTree().getSelectedQueryNode().getQuery();
         Main.instance().prepareNewQuery(selectedQuery.getQuery(), false);
-        isDesigning = false;
-    }
 
+    }
+   static SUQueryBean selectedQuery;
     public static void saveDesignedQuery(String designedQuery) {
+        selectedQuery = Main.instance().getConnectionTree().getSelectedQueryNode().getQuery();
         SUArrayList<SUConnectionBean> connectionList = Main.instance()
                 .getConnectionTree()
                 .getConnectionBeans();
@@ -92,6 +91,7 @@ public class UiPopupQuery extends UiPopupAbstract {
         List<SUQueryBean> oldQueries = selectedConnection.getQueries();
         oldQueries.remove(selectedQuery);
         selectedQuery.setQuery(designedQuery);
+        selectedQuery.setQuery(designedQuery);
         oldQueries.add(selectedQuery);
         Config.instance().saveConfig();
         isDesigning = false;
@@ -102,7 +102,7 @@ public class UiPopupQuery extends UiPopupAbstract {
     }
 
     private void deleteQuery() {
-        //JOptionPane elave etmek qalib
+        SUQueryBean selectedQuery = Main.instance().getConnectionTree().getSelectedQueryNode().getQuery();
         SUArrayList<SUConnectionBean> connectionList = Main.instance()
                 .getConnectionTree()
                 .getConnectionBeans();
@@ -110,8 +110,8 @@ public class UiPopupQuery extends UiPopupAbstract {
                 .getConnectionTree()
                 .getCurrentConnectionNode()
                 .getConnection();
-        connectionList.remove(selectedConnection);
-        List<SUQueryBean> oldQueries = selectedConnection.getQueries();
+         connectionList.remove(selectedConnection);
+         List<SUQueryBean> oldQueries = selectedConnection.getQueries();
         oldQueries.remove(selectedQuery);
         selectedConnection.setQueries(oldQueries);
         connectionList.add(selectedConnection);
@@ -120,6 +120,7 @@ public class UiPopupQuery extends UiPopupAbstract {
     }
 
     private void renameQuery() {
+        SUQueryBean selectedQuery = Main.instance().getConnectionTree().getSelectedQueryNode().getQuery();
         SUArrayList<SUConnectionBean> connectionList = Main.instance()
                 .getConnectionTree()
                 .getConnectionBeans();
@@ -148,6 +149,7 @@ public class UiPopupQuery extends UiPopupAbstract {
     }
 
     private void copyQuery() throws Exception {
+        SUQueryBean selectedQuery = Main.instance().getConnectionTree().getSelectedQueryNode().getQuery();
         FileUtility.writeObjectToFile(selectedQuery, "forCopy.copy");
     }
 }

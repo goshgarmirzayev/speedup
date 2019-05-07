@@ -18,14 +18,15 @@ public class DataType {
     private String name;
     private boolean haveLength;
     private boolean isDecimal;
-    private boolean haveDefaultValue;
+    //private boolean haveDefaultValue;
     private String panelType;
     private DataTypePanel panel;
-    
-    public DataType(String name, boolean haveLength, boolean isDecimal, String panelType ,DataTypePanel panel) {
+
+    public DataType(String name, boolean haveLength, boolean isDecimal, String panelType, DataTypePanel panel) {
         this.name = name;
         this.haveLength = haveLength;
         this.isDecimal = isDecimal;
+        
         this.panelType = panelType;
         this.panel = panel;
     }
@@ -33,7 +34,6 @@ public class DataType {
     public DataType() {
     }
 
-    
     @Override
     public String toString() {
         return this.name;

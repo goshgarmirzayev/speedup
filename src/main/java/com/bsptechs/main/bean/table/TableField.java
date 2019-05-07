@@ -10,7 +10,6 @@ import com.bsptechs.main.bean.table.dataTypePanel.NumericFamilyPanel;
 import lombok.Data;
 
 /**
- *
  * @author Goshgar
  */
 @Data
@@ -37,60 +36,52 @@ public class TableField {
     public TableField() {
 
     }
-    
-    
-    public String getQuery(){
+
+    public String getQuery() {
         StringBuilder query = new StringBuilder();
         TableField field = this;
         if (field.getName() != null) {
-                query.append("`")
-                        .append(field.getName())
-                        .append("` ");
-            }
-            if (field.getDataType() != null) {
+            query.append("`")
+                    .append(field.getName())
+                    .append("` ");
+        }
+        if (field.getDataType() != null) {
+            query.
+                    append(field.getDataType());
+
+            if (field.getDataType().isHaveLength() && !field.getDataType().isDecimal()) {
                 query.
-                        append(field.getDataType());
-
-                if (field.getDataType().isHaveLength() && !field.getDataType().isDecimal()) {
-                    query.
-                            append("(").
-                            append(field.getLength()).
-                            append(")");
-                }
-                if (field.getDataType().isDecimal()) {
-                    query.append("(")
-                            .append(field.getLength())
-                            .append(",").append(field.getDecimal())
-                            .append(")");
-                }
-               
+                        append("(").
+                        append(field.getLength()).
+                        append(")");
             }
-            
-            
-            String panelQuery = analyzePanel();
-            panelQuery.replace("$NOT_NULL",field.isNotNull()?"NOT NULL":"NULL");
-            
-//            fieldCount++;
-            //NULL and NOTNULL begin
+            if (field.getDataType().isDecimal()) {
+                query.append("(")
+                        .append(field.getLength())
+                        .append(",").append(field.getDecimal())
+                        .append(")");
+            }
 
-//            if (field.isNotNull()) {
-//                query.append(" NOT NULL ");
-//            }
-//            if (!field.isNotNull()) {
-//                query.append(" NULL ");
-//            }
-            
-            
-            
-            return query.toString();
+        }
+
+        String panelQuery = analyzePanel();
+        String queryPanel;
+        if (field.isNotNull()) {
+            queryPanel = panelQuery.replace("$NOT_NULL", " NOT NULL ");
+
+        } else {
+            queryPanel = panelQuery.replace("$NOT_NULL", " NULL ");
+
+        }
+        query.append(queryPanel);
+        return query.toString();
     }
-    
-    
-    public String analyzePanel(){
-        if(this.getDataType()==null || this.getDataType().getPanel()==null) return "";
-        
+
+    public String analyzePanel() {
+        if (this.getDataType() == null || this.getDataType().getPanel() == null) {
+            return "";
+        }
         DataTypePanel panel = this.getDataType().getPanel();
-               
         String result = panel.getQuery();
         return result;
     }

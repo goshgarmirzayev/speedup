@@ -126,9 +126,9 @@ public class SetFamilyPanel extends DataTypePanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cmbCharsetItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbCharsetItemStateChanged
-      Charset charset =  (Charset) cmbCharset.getSelectedItem();
+        Charset charset = (Charset) cmbCharset.getSelectedItem();
         if (charset != null) {
-            CharFamilyPanel.fillCollateCombo(currentConnection,charset,cmbCollation);
+            CharFamilyPanel.fillCollateCombo(currentConnection, charset, cmbCollation);
         }
     }//GEN-LAST:event_cmbCharsetItemStateChanged
 
@@ -137,20 +137,16 @@ public class SetFamilyPanel extends DataTypePanel {
     }//GEN-LAST:event_btnDefaultActionPerformed
 
     private void btnValuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnValuesActionPerformed
-       Valuess values=new Valuess();
-      this.add(values);
-       values.setVisible(false);
+
     }//GEN-LAST:event_btnValuesActionPerformed
 
-    public String getQuery(){
-        
-        String str ="set($VALUE) $CH_SET $COLLATE $NOT_NULL $DEFAULT";
-        
-       str =  str.replace("$VALUE","s");
-       str =  str.replace("$CH_SET","CHARACTER SET utf8");
-       str =  str.replace("$COLLATE","COLLATE utf8_bin");
-       str =  str.replace("$DEFAULT","DEFAULT f");
-        
+    @Override
+    public String getQuery() {
+        String str = "($VALUE) $CH_SET $COLLATE $NOT_NULL $DEFAULT";
+        str = str.replace("$VALUE",txtValues.getText());
+        str = str.replace("$CH_SET", "CHARACTER SET " + cmbCharset.getSelectedItem().toString());
+        str = str.replace("$COLLATE", "COLLATE " + cmbCollation.getSelectedItem().toString());
+        str = str.replace("$DEFAULT", "DEFAULT " + txtDefault.getText());
         return str;
     }
 

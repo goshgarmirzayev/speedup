@@ -17,11 +17,13 @@ import com.bsptechs.main.bean.server.SUDatabaseBean;
 import com.bsptechs.main.bean.table.dataTypePanel.BlobFamilyPanel;
 import com.bsptechs.main.bean.table.dataTypePanel.CharFamilyPanel;
 import com.bsptechs.main.bean.table.dataTypePanel.DataTypePanel;
+import com.bsptechs.main.bean.table.dataTypePanel.DefaultFamilyPanel;
 import com.bsptechs.main.bean.table.dataTypePanel.NumericFamilyPanel;
 import com.bsptechs.main.bean.table.dataTypePanel.SetFamilyPanel;
 import com.bsptechs.main.bean.table.dataTypePanel.WoutAIPanel;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
 import com.bsptechs.main.util.LogUtil;
+
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +37,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 /**
- *
  * @author Goshgar
  */
 public class PanelNewTable extends javax.swing.JPanel {
@@ -53,39 +54,52 @@ public class PanelNewTable extends javax.swing.JPanel {
 
     private String generateQuery() {
         txtQuery.setEditable(false);
-        StringBuilder query = new StringBuilder(
-                "CREATE TABLE `" + currentDatabase.getName() + "`.`Untitled` (");
-        StringBuilder primaryKeys = new StringBuilder("PRIMARY KEY(");
+        String query =
+                "CREATE TABLE `" + currentDatabase.getName() + "`.`Untitled` (";
+        StringBuilder primaryKeys = new StringBuilder(", PRIMARY KEY(");
         StringBuilder indexes = new StringBuilder("Index(");
         SUArrayList<TableField> fields = getTableFields();
         int primaryKeyCount = 0;
-//        int fieldCount = 0;
+        int fieldCount = 0;
         boolean havePrimaryKeys = false;
         for (TableField field : fields) {
-            havePrimaryKeys = field.isPrimaryKey();
-
-            query.append(field.getQuery());
-
-            if (fields.size() > 1 || havePrimaryKeys) {
-                query.append(",");
-            }
-            //NULL and NOTNULL end
+            fieldCount = fieldCount + 1;
+            query = query + field.getQuery();
             if (field.isPrimaryKey()) {
                 primaryKeyCount++;
+                havePrimaryKeys = true;
                 if (primaryKeyCount > 1) {
                     primaryKeys.append(",`").append(field.getName()).append("`");
                 } else {
                     primaryKeys.append("`").append(field.getName()).append("`");
                 }
             }
+            if (fields.size() > 1) {
+                query = query + ("$" + fieldCount + ",");
+                primaryKeys = primaryKeys.replace(0, 1, "");
+            }
+
+            if (fields.size() < 1) {
+                primaryKeys = primaryKeys.replace(0, 1, ",");
+            }
+
 
         }
+
         if (havePrimaryKeys) {
-            query.append(primaryKeys).append(")");
+            primaryKeys.append(")");
+            query = query + (primaryKeys);
         }
-        query.append(")");
+        if(havePrimaryKeys==false){
+            query = query.replace("$"+ (fields.size()) + ",", "");
+        }
+        for (int i = 0; i <= fields.size(); i++) {
+            query = query.replace("$" + i + ",", ",");
+        }
+
+        query = query + ")";
         txtQuery.setText(query.toString());
-        return query.toString();
+        return query;
     }
 
     private SUArrayList<TableField> getTableFields() {
@@ -128,43 +142,43 @@ public class PanelNewTable extends javax.swing.JPanel {
         List<DataType> list = new ArrayList<>();
         list.add(new DataType("bigint", true, false, "NumericFamily", new NumericFamilyPanel()));
         list.add(new DataType("binary", false, false, "BlobFamily", new BlobFamilyPanel()));
-        list.add(new DataType("bit", false, false, "Default", null));
+        list.add(new DataType("bit", false, false, "Default", new DefaultFamilyPanel()));
         list.add(new DataType("blob", false, false, "BlobFamily", new BlobFamilyPanel()));
         list.add(new DataType("char", true, false, "CharFamily", new CharFamilyPanel()));
-        list.add(new DataType("date", false, false, "Default", null));
-        list.add(new DataType("datetime", false, false, "Default", null));
+        list.add(new DataType("date", false, false, "Default", new DefaultFamilyPanel()));
+        list.add(new DataType("datetime", false, false, "Default", new DefaultFamilyPanel()));
         list.add(new DataType("decimal", true, true, "WoutAI", new WoutAIPanel()));//WIthOut AutoIncrement
         list.add(new DataType("double", true, true, "NumericFamily", new NumericFamilyPanel()));
-        list.add(new DataType("enum", false, false, "EnumFamily", null));
+        list.add(new DataType("enum", false, false, "EnumFamily", new DefaultFamilyPanel()));
         list.add(new DataType("float", true, true, "NumericFamily", new NumericFamilyPanel()));
-        list.add(new DataType("geometry", false, false, "Default", null));
-        list.add(new DataType("geometrycollection", false, false, "Default", null));
+        list.add(new DataType("geometry", false, false, "Default", new DefaultFamilyPanel()));
+        list.add(new DataType("geometrycollection", false, false, "Default", new DefaultFamilyPanel()));
         list.add(new DataType("int", true, false, "NumericFamily", new NumericFamilyPanel()));
         list.add(new DataType("integer", true, false, "NumericFamily", new NumericFamilyPanel()));
-        list.add(new DataType("linestring", false, false, "Default", null));
+        list.add(new DataType("linestring", false, false, "Default", new DefaultFamilyPanel()));
         list.add(new DataType("longblob", false, false, "BlobFamily", new BlobFamilyPanel()));
         list.add(new DataType("longtext", false, false, "CharFamily", new CharFamilyPanel()));
         list.add(new DataType("mediumblob", false, false, "BlobFamily", new BlobFamilyPanel()));
         list.add(new DataType("mediumint", true, false, "NumericFamily", new NumericFamilyPanel()));
         list.add(new DataType("mediumtext", false, false, "CharFamily", new CharFamilyPanel()));
-        list.add(new DataType("multilinestring", false, false, "Default", null));
-        list.add(new DataType("multipoint", false, false, "Default", null));
-        list.add(new DataType("multipolygon", false, false, "Default", null));
+        list.add(new DataType("multilinestring", false, false, "Default", new DefaultFamilyPanel()));
+        list.add(new DataType("multipoint", false, false, "Default", new DefaultFamilyPanel()));
+        list.add(new DataType("multipolygon", false, false, "Default", new DefaultFamilyPanel()));
         list.add(new DataType("numeric", true, true, "WoutAI", new WoutAIPanel()));
-        list.add(new DataType("point", false, false, "Default", null));
-        list.add(new DataType("polygon", false, false, "Default", null));
+        list.add(new DataType("point", false, false, "Default", new DefaultFamilyPanel()));
+        list.add(new DataType("polygon", false, false, "Default", new DefaultFamilyPanel()));
         list.add(new DataType("real", true, true, "NumericFamily", new NumericFamilyPanel()));
         list.add(new DataType("set", false, false, "SetFamily", new SetFamilyPanel()));
         list.add(new DataType("smallint", true, true, "NumericFamily", new NumericFamilyPanel()));
         list.add(new DataType("text", false, false, "CharFamily", new CharFamilyPanel()));
-        list.add(new DataType("time", false, false, "Default", null));
-        list.add(new DataType("timestamp", false, false, "OnUpdate", null));
+        list.add(new DataType("time", false, false, "Default", new DefaultFamilyPanel()));
+        list.add(new DataType("timestamp", false, false, "OnUpdate", new DefaultFamilyPanel()));
         list.add(new DataType("tinyblob", false, false, "BlobFamily", new BlobFamilyPanel()));
         list.add(new DataType("tinyint", true, true, "NumericFamily", new NumericFamilyPanel()));
         list.add(new DataType("tinytext", false, false, "CharFamily", new CharFamilyPanel()));
         list.add(new DataType("varbinary", false, false, "BlobFamily", new BlobFamilyPanel()));
         list.add(new DataType("varchar", true, false, "CharFamily", new CharFamilyPanel()));
-        list.add(new DataType("year", false, false, "Default", null));
+        list.add(new DataType("year", false, false, "Default", new DefaultFamilyPanel()));
         return list;
     }
 
@@ -185,32 +199,7 @@ public class PanelNewTable extends javax.swing.JPanel {
             DataType type = (DataType) dataTypesCombo.getSelectedItem();
             loadPanel(type);
         });
-//            if (type != null) {
-//                
-//                if (type.getPanelType().equalsIgnoreCase("Default")) {
-//                    loadDefaultPanel();
-//                }
-//                if (type.getPanelType().equalsIgnoreCase("NumericFamily")) {
-//                    loadNumericPanel();
-//                }
-//                if (type.getPanelType().equalsIgnoreCase("CharFamily")) {
-//                    loadCharFamilyPanel();
-//                }
-//                if (type.getPanelType().equalsIgnoreCase("BlobFamily")) {
-//                    loadBlobFamilyPanel();
-//                }
-//                if (type.getPanelType().equalsIgnoreCase("OnUpdate")) {
-//                    loadTimestamp();
-//                }
-//                if (type.getPanelType().equalsIgnoreCase("WoutAI")) {
-//                    loadWoutFamily();
-//                }
-//                if (type.getPanelType().equalsIgnoreCase("SetFamily")) {
-//                    loadSetFamilyPanel();
-//                }
-//            }
 
-//        });
     }
 
     private void loadButtons() {
@@ -281,6 +270,8 @@ public class PanelNewTable extends javax.swing.JPanel {
                 break;
             case 6://SQL preview
                 pnlControlButtons.removeAll();
+                txtQuery.setLineWrap(true);
+                txtQuery.setWrapStyleWord(true);
                 generateQuery();
                 break;
             default:
@@ -299,7 +290,6 @@ public class PanelNewTable extends javax.swing.JPanel {
         if (type == null) {
             return;
         }
-
         dataTypePanel.removeAll();
 
         DataTypePanel panel = type.getPanel();
@@ -321,40 +311,7 @@ public class PanelNewTable extends javax.swing.JPanel {
         return panel;
     }
 
-    private void loadBlobFamilyPanel() {
-
-        dataTypePanel.removeAll();
-        dataTypePanel.add(new BlobFamilyPanel());
-
-        dataTypePanel.revalidate();
-    }
-
-    private void loadCharFamilyPanel() {
-        dataTypePanel.removeAll();
-        dataTypePanel.setVisible(true);
-        dataTypePanel.add(new CharFamilyPanel());
-        dataTypePanel.revalidate();
-    }
-
-    private void loadTimestamp() {
-        JCheckBox onUpdate = new JCheckBox("On Update Current_Timestampt");
-        dataTypePanel.add(onUpdate);
-        dataTypePanel.revalidate();
-    }
-
-    private void loadWoutFamily() {
-        dataTypePanel.removeAll();
-        dataTypePanel.add(new WoutAIPanel());
-        dataTypePanel.revalidate();
-
-    }
-
-    private void loadSetFamilyPanel() {
-        dataTypePanel.removeAll();
-        dataTypePanel.add(new SetFamilyPanel());
-        dataTypePanel.revalidate();
-    }
-//Load Data Type Panel End
+    //Load Data Type Panel End
 
     private void addRow(DefaultTableModel dm, Object rowData[]) {
         dm.addRow(rowData);
@@ -461,19 +418,19 @@ public class PanelNewTable extends javax.swing.JPanel {
         });
 
         tblFieldPane.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][]{
 
-            },
-            new String [] {
-                "Name", "Type", "Length", "Decimal", "Not null", "Key", "Comment"
-            }
+                },
+                new String[]{
+                        "Name", "Type", "Length", "Decimal", "Not null", "Key", "Comment"
+                }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Object.class
+            Class[] types = new Class[]{
+                    java.lang.Object.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
         });
         tblFieldPane.addHierarchyListener(new java.awt.event.HierarchyListener() {
@@ -486,32 +443,32 @@ public class PanelNewTable extends javax.swing.JPanel {
         javax.swing.GroupLayout pnlFieldsLayout = new javax.swing.GroupLayout(pnlFields);
         pnlFields.setLayout(pnlFieldsLayout);
         pnlFieldsLayout.setHorizontalGroup(
-            pnlFieldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 865, Short.MAX_VALUE)
+                pnlFieldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 865, Short.MAX_VALUE)
         );
         pnlFieldsLayout.setVerticalGroup(
-            pnlFieldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlFieldsLayout.createSequentialGroup()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                pnlFieldsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlFieldsLayout.createSequentialGroup()
+                                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Fields", pnlFields);
 
         tblIndex.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][]{
 
-            },
-            new String [] {
-                "Name", "Fields", "Index Type", "Index Method", "Comment"
-            }
+                },
+                new String[]{
+                        "Name", "Fields", "Index Type", "Index Method", "Comment"
+                }
         ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
+            Class[] types = new Class[]{
+                    java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
         });
         tblIndex.addHierarchyListener(new java.awt.event.HierarchyListener() {
@@ -524,14 +481,14 @@ public class PanelNewTable extends javax.swing.JPanel {
         javax.swing.GroupLayout pnlIndexesLayout = new javax.swing.GroupLayout(pnlIndexes);
         pnlIndexes.setLayout(pnlIndexesLayout);
         pnlIndexesLayout.setHorizontalGroup(
-            pnlIndexesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlIndexesLayout.createSequentialGroup()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 872, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                pnlIndexesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlIndexesLayout.createSequentialGroup()
+                                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 872, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
         );
         pnlIndexesLayout.setVerticalGroup(
-            pnlIndexesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                pnlIndexesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
         );
 
         tabbedPane.addTab("Indexes", pnlIndexes);
@@ -539,12 +496,12 @@ public class PanelNewTable extends javax.swing.JPanel {
         javax.swing.GroupLayout pnlForeignKeysLayout = new javax.swing.GroupLayout(pnlForeignKeys);
         pnlForeignKeys.setLayout(pnlForeignKeysLayout);
         pnlForeignKeysLayout.setHorizontalGroup(
-            pnlForeignKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 865, Short.MAX_VALUE)
+                pnlForeignKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 865, Short.MAX_VALUE)
         );
         pnlForeignKeysLayout.setVerticalGroup(
-            pnlForeignKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 282, Short.MAX_VALUE)
+                pnlForeignKeysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 282, Short.MAX_VALUE)
         );
 
         tabbedPane.addTab("Foreign Keys", pnlForeignKeys);
@@ -552,12 +509,12 @@ public class PanelNewTable extends javax.swing.JPanel {
         javax.swing.GroupLayout pnlTriggersLayout = new javax.swing.GroupLayout(pnlTriggers);
         pnlTriggers.setLayout(pnlTriggersLayout);
         pnlTriggersLayout.setHorizontalGroup(
-            pnlTriggersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 865, Short.MAX_VALUE)
+                pnlTriggersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 865, Short.MAX_VALUE)
         );
         pnlTriggersLayout.setVerticalGroup(
-            pnlTriggersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 282, Short.MAX_VALUE)
+                pnlTriggersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 282, Short.MAX_VALUE)
         );
 
         tabbedPane.addTab("Triggers", pnlTriggers);
@@ -565,12 +522,12 @@ public class PanelNewTable extends javax.swing.JPanel {
         javax.swing.GroupLayout pnlOptionsLayout = new javax.swing.GroupLayout(pnlOptions);
         pnlOptions.setLayout(pnlOptionsLayout);
         pnlOptionsLayout.setHorizontalGroup(
-            pnlOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 865, Short.MAX_VALUE)
+                pnlOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 865, Short.MAX_VALUE)
         );
         pnlOptionsLayout.setVerticalGroup(
-            pnlOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 282, Short.MAX_VALUE)
+                pnlOptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(0, 282, Short.MAX_VALUE)
         );
 
         tabbedPane.addTab("Options", pnlOptions);
@@ -582,14 +539,14 @@ public class PanelNewTable extends javax.swing.JPanel {
         javax.swing.GroupLayout pnlCommentLayout = new javax.swing.GroupLayout(pnlComment);
         pnlComment.setLayout(pnlCommentLayout);
         pnlCommentLayout.setHorizontalGroup(
-            pnlCommentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 865, Short.MAX_VALUE)
+                pnlCommentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 865, Short.MAX_VALUE)
         );
         pnlCommentLayout.setVerticalGroup(
-            pnlCommentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlCommentLayout.createSequentialGroup()
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                pnlCommentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlCommentLayout.createSequentialGroup()
+                                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Comment", pnlComment);
@@ -603,14 +560,14 @@ public class PanelNewTable extends javax.swing.JPanel {
         javax.swing.GroupLayout pnlSQLPreview1Layout = new javax.swing.GroupLayout(pnlSQLPreview1);
         pnlSQLPreview1.setLayout(pnlSQLPreview1Layout);
         pnlSQLPreview1Layout.setHorizontalGroup(
-            pnlSQLPreview1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 865, Short.MAX_VALUE)
+                pnlSQLPreview1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 865, Short.MAX_VALUE)
         );
         pnlSQLPreview1Layout.setVerticalGroup(
-            pnlSQLPreview1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlSQLPreview1Layout.createSequentialGroup()
-                .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 1, Short.MAX_VALUE))
+                pnlSQLPreview1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlSQLPreview1Layout.createSequentialGroup()
+                                .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 1, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("SQL Preview", pnlSQLPreview1);
@@ -623,17 +580,17 @@ public class PanelNewTable extends javax.swing.JPanel {
         javax.swing.GroupLayout typePanelLayout = new javax.swing.GroupLayout(typePanel);
         typePanel.setLayout(typePanelLayout);
         typePanelLayout.setHorizontalGroup(
-            typePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(typePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(dataTypePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 459, Short.MAX_VALUE))
+                typePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(typePanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(dataTypePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 459, Short.MAX_VALUE))
         );
         typePanelLayout.setVerticalGroup(
-            typePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(typePanelLayout.createSequentialGroup()
-                .addComponent(dataTypePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 376, Short.MAX_VALUE))
+                typePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(typePanelLayout.createSequentialGroup()
+                                .addComponent(dataTypePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 376, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(typePanel);

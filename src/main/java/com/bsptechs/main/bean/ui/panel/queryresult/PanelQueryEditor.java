@@ -724,7 +724,7 @@ public class PanelQueryEditor extends javax.swing.JPanel {
     }//GEN-LAST:event_btnExportResultMouseEntered
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-
+         LogUtil.log(UiPopupQuery.isDesigning);
         if (UiPopupQuery.isDesigning) {
             UiPopupQuery.saveDesignedQuery(txtQuery.getText());
         }

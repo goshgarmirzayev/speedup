@@ -16,16 +16,13 @@ public class NumericFamilyPanel extends DataTypePanel {
     /**
      * Creates new form NUmericFamily
      */
-    public static boolean isAutoIncr = false;
-    public static boolean isUnsigned = false;
-    public static boolean isZerofill = false;
-   
-
-  
+    private boolean isAutoIncr;
+    private boolean isUnsigned;
+    private boolean isZerofill;
 
     public NumericFamilyPanel() {
         initComponents();
-        
+
     }
 
     /**
@@ -127,7 +124,7 @@ public class NumericFamilyPanel extends DataTypePanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void autoIncrementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoIncrementActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_autoIncrementActionPerformed
 
     private void autoIncrementStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_autoIncrementStateChanged
@@ -143,41 +140,32 @@ public class NumericFamilyPanel extends DataTypePanel {
     }//GEN-LAST:event_zerofillStateChanged
 
     private void autoIncrementItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_autoIncrementItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            isAutoIncr = true;
-        } else {
-            isAutoIncr = false;
-        }
+      
 
     }//GEN-LAST:event_autoIncrementItemStateChanged
 
     private void unsignedItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_unsignedItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            isUnsigned = true;
-        } else {
-            isUnsigned = false;
-        }
+        this.isUnsigned = evt.getStateChange() == ItemEvent.SELECTED;
     }//GEN-LAST:event_unsignedItemStateChanged
 
     private void zerofillItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_zerofillItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            isZerofill = true;
-        } else {
-            isZerofill = false;
-        }
+        this.isZerofill = evt.getStateChange() == ItemEvent.SELECTED;
     }//GEN-LAST:event_zerofillItemStateChanged
 
     private void defaultComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_defaultComboItemStateChanged
 
     }//GEN-LAST:event_defaultComboItemStateChanged
+    private String getDefaultValue() {
+//    if(cmb)
+        return null;
+    }
 
     @Override
-    public String getQuery(){
-        String str= "$UNSIGNED $ZEROFILL $NOT_NULL $DEFAULT $AUTO_INCREMENT";
-        str = str.replace("$DEFAULT","DEFAULT 's'");
-        str.replace("$UNSIGNED",isUnsigned?"UNSIGNED":"");
-        str.replace("$ZEROFILL",isZerofill?"ZEROFILL":"");
-        str.replace("$AUTO_INCREMENT", isAutoIncr?"AUTOINCREMENT":"");
+    public String getQuery() {
+        String str = "$UNSIGNED $ZEROFILL $NOT_NULL $AUTO_INCREMENT";
+        str=str.replace("$UNSIGNED",unsigned.isSelected()?"UNSIGNED":"");
+        str=str.replace("$ZEROFILL",zerofill.isSelected()?"ZEROFILL":"");
+        str=str.replace("$AUTO_INCREMENT",autoIncrement.isSelected()?"AUTO_INCREMENT":"");
         return str;
     }
 

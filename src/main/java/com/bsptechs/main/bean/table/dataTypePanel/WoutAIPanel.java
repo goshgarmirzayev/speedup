@@ -6,7 +6,6 @@
 package com.bsptechs.main.bean.table.dataTypePanel;
 
 /**
- *
  * @author Goshgar
  */
 public class WoutAIPanel extends DataTypePanel {
@@ -62,42 +61,42 @@ public class WoutAIPanel extends DataTypePanel {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(unsigned, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
-                    .addComponent(zerofill, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 89, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(unsigned, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+                                        .addComponent(zerofill, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(0, 89, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(unsigned)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(zerofill)
-                .addGap(0, 28, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(unsigned)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(zerofill)
+                                .addGap(0, 28, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void unsignedItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_unsignedItemStateChanged
-    
-    }//GEN-LAST:event_unsignedItemStateChanged
+
+    }
 
     private void unsignedStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_unsignedStateChanged
 
-    }//GEN-LAST:event_unsignedStateChanged
+    }
 
     private void zerofillItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_zerofillItemStateChanged
-       
-    }//GEN-LAST:event_zerofillItemStateChanged
+
+    }
 
     private void zerofillStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_zerofillStateChanged
 
-    }//GEN-LAST:event_zerofillStateChanged
+    }
 
     private void zerofillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zerofillActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_zerofillActionPerformed
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -107,6 +106,9 @@ public class WoutAIPanel extends DataTypePanel {
 
     @Override
     public String getQuery() {
-       return null;
+        String str = "$UNSIGNED $ZEROFILL $NOT_NULL";
+        str = str.replace("$UNSIGNED", unsigned.isSelected() ? "UNSIGNED" : "");
+        str = str.replace("$ZEROFILL", zerofill.isSelected() ? "ZEROFILL" : "");
+        return str;
     }
 }

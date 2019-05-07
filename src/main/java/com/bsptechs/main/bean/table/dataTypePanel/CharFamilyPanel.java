@@ -10,6 +10,8 @@ import com.bsptechs.main.bean.Charset;
 import com.bsptechs.main.bean.Collation;
 import com.bsptechs.main.bean.server.SUConnectionBean;
 import com.bsptechs.main.dao.impl.DatabaseDAOImpl;
+import com.bsptechs.main.util.LogUtil;
+
 import java.awt.event.ItemEvent;
 import java.util.List;
 import javax.swing.JComboBox;
@@ -19,17 +21,17 @@ import javax.swing.JComboBox;
  * @author Goshgar
  */
 public class CharFamilyPanel extends DataTypePanel {
- 
+
     /**
      * Creates new form CharFamilyPanel
      */
     public static boolean isBinary;
-    private  static DatabaseDAOImpl db = new DatabaseDAOImpl();
+    private static DatabaseDAOImpl db = new DatabaseDAOImpl();
     private SUConnectionBean currentConnection = Main.instance().getConnectionTree().getCurrentConnectionNode().getConnection();
 
     public CharFamilyPanel() {
         initComponents();
-        fillCharsetCombo(currentConnection,cmbCharset);
+        fillCharsetCombo(currentConnection, cmbCharset);
     }
 
     /**
@@ -48,6 +50,8 @@ public class CharFamilyPanel extends DataTypePanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         binary = new javax.swing.JCheckBox();
+        jLabel4 = new javax.swing.JLabel();
+        defaultCombo = new javax.swing.JComboBox<>();
 
         cmbCharset.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -68,19 +72,39 @@ public class CharFamilyPanel extends DataTypePanel {
             }
         });
 
+        jLabel4.setText("Default:");
+
+        defaultCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "", "NULL", "EMPTY STRING" }));
+        defaultCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                defaultComboItemStateChanged(evt);
+            }
+        });
+        defaultCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                defaultComboActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(defaultCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtKeyLength)
                     .addComponent(cmbCollate, 0, 208, Short.MAX_VALUE)
                     .addComponent(cmbCharset, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -95,6 +119,10 @@ public class CharFamilyPanel extends DataTypePanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(defaultCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmbCharset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -105,22 +133,22 @@ public class CharFamilyPanel extends DataTypePanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtKeyLength, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(binary)
-                .addContainerGap(105, Short.MAX_VALUE))
+                .addContainerGap(78, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-    public static void fillCharsetCombo(SUConnectionBean connection,JComboBox combo) {
+    public static void fillCharsetCombo(SUConnectionBean connection, JComboBox combo) {
         List<Charset> list = db.getAllCharsets(connection);
-         combo.removeAllItems();
-         combo.addItem(null);
+        combo.removeAllItems();
+        combo.addItem(null);
         for (Charset charset : list) {
             combo.addItem(charset);
         }
 
     }
 
-    public  static void fillCollateCombo(SUConnectionBean connection,Charset charset,JComboBox combo) {
+    public static void fillCollateCombo(SUConnectionBean connection, Charset charset, JComboBox combo) {
         List<Collation> list = db.getAllCollations(connection, charset);
         combo.removeAllItems();
         for (Collation collation : list) {
@@ -137,20 +165,52 @@ public class CharFamilyPanel extends DataTypePanel {
     }//GEN-LAST:event_binaryItemStateChanged
 
     private void cmbCharsetItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbCharsetItemStateChanged
-        Charset charset =  (Charset) cmbCharset.getSelectedItem();
+        Charset charset = (Charset) cmbCharset.getSelectedItem();
         if (charset != null) {
-            fillCollateCombo(currentConnection,charset,cmbCollate);
+            fillCollateCombo(currentConnection, charset, cmbCollate);
         }
     }//GEN-LAST:event_cmbCharsetItemStateChanged
 
+    private void defaultComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_defaultComboItemStateChanged
+
+    }//GEN-LAST:event_defaultComboItemStateChanged
+
+    private void defaultComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_defaultComboActionPerformed
+
+
+    @Override
+    public String getQuery() {
+        String firstQuery = " $BINARY $CHARACTER SET ? $COLLATE ? $NOT_NULL";
+        if (!binary.isSelected()) {
+            firstQuery = firstQuery.replaceAll("$BINARY","");
+        } else {
+            firstQuery = firstQuery.replace("$BINARY","BINARY");
+        }
+        if(cmbCharset.getSelectedItem()!=null){
+            firstQuery = firstQuery.replace("$CHARACTER SET ?", "CHARACTER SET " +cmbCharset.getSelectedItem());
+            firstQuery =firstQuery.replace("$COLLATE ?","COLLATE "+cmbCollate.getSelectedItem());
+        }
+        else{
+            firstQuery = firstQuery.replace("$CHARACTER SET ?", "");
+            firstQuery = firstQuery.replace("$COLLATE ?","");
+        }
+        LogUtil.log(firstQuery);
+        return firstQuery;
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox binary;
     private javax.swing.JComboBox<Charset> cmbCharset;
     private javax.swing.JComboBox<Collation> cmbCollate;
+    private javax.swing.JComboBox<String> defaultCombo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField txtKeyLength;
     // End of variables declaration//GEN-END:variables
+
 }
