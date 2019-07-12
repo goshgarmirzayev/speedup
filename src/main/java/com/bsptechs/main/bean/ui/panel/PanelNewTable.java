@@ -54,8 +54,8 @@ public class PanelNewTable extends javax.swing.JPanel {
 
     private String generateQuery() {
         txtQuery.setEditable(false);
-        String query =
-                "CREATE TABLE `" + currentDatabase.getName() + "`.`Untitled` (";
+        String query
+                = "CREATE TABLE `" + currentDatabase.getName() + "`.`Untitled` (";
         StringBuilder primaryKeys = new StringBuilder(", PRIMARY KEY(");
         StringBuilder indexes = new StringBuilder("Index(");
         SUArrayList<TableField> fields = getTableFields();
@@ -83,15 +83,14 @@ public class PanelNewTable extends javax.swing.JPanel {
                 primaryKeys = primaryKeys.replace(0, 1, ",");
             }
 
-
         }
 
         if (havePrimaryKeys) {
             primaryKeys.append(")");
             query = query + (primaryKeys);
         }
-        if(havePrimaryKeys==false){
-            query = query.replace("$"+ (fields.size()) + ",", "");
+        if (havePrimaryKeys == false) {
+            query = query.replace("$" + (fields.size()) + ",", "");
         }
         for (int i = 0; i <= fields.size(); i++) {
             query = query.replace("$" + i + ",", ",");
@@ -168,7 +167,7 @@ public class PanelNewTable extends javax.swing.JPanel {
         list.add(new DataType("point", false, false, "Default", new DefaultFamilyPanel()));
         list.add(new DataType("polygon", false, false, "Default", new DefaultFamilyPanel()));
         list.add(new DataType("real", true, true, "NumericFamily", new NumericFamilyPanel()));
-        list.add(new DataType("set", false, false, "SetFamily", new SetFamilyPanel()));
+        list.add(new DataType("set", false, false, "SetFamily",  SetFamilyPanel.instance()));
         list.add(new DataType("smallint", true, true, "NumericFamily", new NumericFamilyPanel()));
         list.add(new DataType("text", false, false, "CharFamily", new CharFamilyPanel()));
         list.add(new DataType("time", false, false, "Default", new DefaultFamilyPanel()));
@@ -225,10 +224,12 @@ public class PanelNewTable extends javax.swing.JPanel {
                     Object[] rowdata = {null, null, 0, 0, false, false, null};
                     addRow(dm, rowdata);
                 });
-                insertField.addActionListener((ActionEvent e) -> {
+                deleteField.addActionListener((ActionEvent e) -> {
                     removeRow(tblFieldPane.getSelectedRow(), tblFieldPane);
+                    dataTypePanel.removeAll();
                 });
                 pnlControlButtons.revalidate();
+                pnlControlButtons.repaint();
                 break;
             case 1://indexes
                 pnlControlButtons.removeAll();
@@ -312,7 +313,6 @@ public class PanelNewTable extends javax.swing.JPanel {
     }
 
     //Load Data Type Panel End
-
     private void addRow(DefaultTableModel dm, Object rowData[]) {
         dm.addRow(rowData);
     }

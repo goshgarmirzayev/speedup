@@ -27,29 +27,45 @@ public class DefaultFamilyPanel extends DataTypePanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jComboBox1 = new javax.swing.JComboBox<>();
+        defaultCombo = new javax.swing.JComboBox<>();
+        jLabel2 = new javax.swing.JLabel();
 
+        defaultCombo.setEditable(true);
+        defaultCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "", "NULL", "EMPTY STRING" }));
+        defaultCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                defaultComboItemStateChanged(evt);
+            }
+        });
 
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "", "NULL", "EMPTY STRING" }));
+        jLabel2.setText("Default:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jComboBox1, 0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(defaultCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jComboBox1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(defaultCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-
     }// </editor-fold>//GEN-END:initComponents
+
+    private void defaultComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_defaultComboItemStateChanged
+
+    }//GEN-LAST:event_defaultComboItemStateChanged
 
     @Override
     public String getQuery() {
-      String str="$NOT_NULL"; //To change body of generated methods, choose Tools | Templates.
-      return str;
+        String str="$NOT_NULL $DEFAULT "; //To change body of generated methods, choose Tools | Templates.
+        str=str.replace("$DEFAULT", defaultCombo.getSelectedItem()!=null? "DEFAULT '"+defaultCombo.getSelectedItem()+"'":"");
+        return str;
     }
 
     /**
@@ -59,6 +75,7 @@ public class DefaultFamilyPanel extends DataTypePanel {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> defaultCombo;
+    private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 }
