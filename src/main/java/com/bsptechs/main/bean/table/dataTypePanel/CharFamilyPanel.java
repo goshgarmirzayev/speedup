@@ -74,6 +74,7 @@ public class CharFamilyPanel extends DataTypePanel {
 
         jLabel4.setText("Default:");
 
+        defaultCombo.setEditable(true);
         defaultCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "", "NULL", "EMPTY STRING" }));
         defaultCombo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
